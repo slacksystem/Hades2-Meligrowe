@@ -1,0 +1,12 @@
+{
+  "namespace": "RoboBro",
+  "name": "Meligrowe",
+  "description": "Makes Melinoe get bigger every room.",
+  "version_number": "0.0.1",
+  "dependencies": [
+    "Hell2Modding-Hell2Modding-1.0.26",
+    "SGG_Modding-ENVY-1.0.0"
+  ],
+  "website_url": "https://github.com/BlueKingBar/Meligrowe",
+  "FullName": "RoboBro-Meligrowe"
+}

@@ -51,7 +51,7 @@ function StartOver_wrap(base, args)
 						SkipQuestStatusCheck = true,
 						SkipActivatedTraitUpdate = true,
 					})
-	AddTraitToHero({
+	local testTrait = AddTraitToHero({
 						TraitData = GetProcessedTraitData({
 							Unit = CurrentRun.Hero,
 							TraitName = "GrowTrait",
@@ -62,7 +62,13 @@ function StartOver_wrap(base, args)
 						SkipActivatedTraitUpdate = true,
 					})
 	--KNOWN ISSUE: This trait does not stick if you quit before the game autosaves again
-	ModUtil.Hades.PrintDisplay( "I think it worked!" )
+	ModUtil.Hades.PrintDisplay( "Boons applied." )
+	if TraitData.GrowTrait ~= nil then
+		ModUtil.Hades.PrintDisplay( "Custom boon found in list!" )
+	end
+	if testTrait ~= nil then
+		ModUtil.Hades.PrintDisplay( "Custom boon applied!" )
+	end
 end
 
 function CreateLevelDisplay_wrap(newEnemy, currentRun)

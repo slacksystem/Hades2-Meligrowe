@@ -48,9 +48,7 @@ GrowTraits = {
 }
 
 for key, growTrait in pairs(GrowTraits) do
+	ModUtil.Hades.PrintDisplay( "Trying to add custom boon..." )
+	print("Did this run at all...?")
 	TraitData[key] = growTrait
-end
-
-for key, keepsake in pairs(Keepsakes) do
-	TraitData[key] = keepsake
 end

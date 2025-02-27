@@ -20,6 +20,8 @@ _PLUGIN = PLUGIN
 
 ---@module 'SGG_Modding-Hades2GameDef-Globals'
 game = rom.game
+---@module 'game-import'
+import_as_fallback(game)
 
 ---@module 'SGG_Modding-SJSON'
 sjson = mods['SGG_Modding-SJSON']
@@ -39,21 +41,26 @@ public.config = config -- so other mods can access our config
 local function on_ready()
 	-- what to do when we are ready, but not re-do on reload.
 	if config.enabled == false then return end
-	import_as_fallback(rom.game)
 	import 'ready.lua'
 end
 
 local function on_reload()
 	-- what to do when we are ready, but also again on every reload.
 	-- only do things that are safe to run over and over.
-	import_as_fallback(rom.game)
 	import 'reload.lua'
 end
 
 -- this allows us to limit certain functions to not be reloaded.
-local loader = reload.auto_single()
+local loader = reload.auto_multiple()
 
 -- this runs only when modutil and the game's lua is ready
 modutil.once_loaded.game(function()
-	loader.load(on_ready, on_reload)
+	loader.load('Meligrowe A', on_ready, on_reload)
 end)
+
+local function onTraitData_Grow()
+	if config.enabled == false then return end
+	import 'Data/TraitData_Grow.lua'
+end
+
+loader.queue.post_import_file('Meligrowe B', onTraitData_Grow)

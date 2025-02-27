@@ -56,13 +56,9 @@ local loader = reload.auto_single()
 
 -- this runs only when modutil and the game's lua is ready
 modutil.once_loaded.game(function()
-	--loader.load('Meligrowe A', on_ready, on_reload)
 	loader.load(on_ready, on_reload)
 end)
 
 local function on_TraitData_Grow()
 	if config.enabled == false then return end
-	--import 'Data/TraitData_Grow.lua'
 end
-
---loader.queue.post_import_file('Meligrowe B', 'TraitData_Grow.lua', on_TraitData_Grow)

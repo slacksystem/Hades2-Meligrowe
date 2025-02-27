@@ -1,7 +1,5 @@
 ---@diagnostic disable: undefined-global
 
-print("Hello...?")
-
 GrowTraits = {
 	GrowTrait = 
 	{
@@ -49,11 +47,6 @@ GrowTraits = {
 	},
 }
 
-print("Anyone there...?")
-
 for key, growTrait in pairs(GrowTraits) do
-	print("Did this run at all...?")
 	TraitData[key] = growTrait
 end
-
-print("We good?")

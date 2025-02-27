@@ -62,13 +62,13 @@ function StartOver_wrap(base, args)
 						SkipActivatedTraitUpdate = true,
 					})
 	--KNOWN ISSUE: This trait does not stick if you quit before the game autosaves again
-	ModUtil.Hades.PrintDisplay( "Boons applied." )
+	--[[ModUtil.Hades.PrintDisplay( "Boons applied." )
 	if TraitData.GrowTrait ~= nil then
 		ModUtil.Hades.PrintDisplay( "Custom boon found in list!" )
 	end
 	if testTrait ~= nil then
 		ModUtil.Hades.PrintDisplay( "Custom boon applied!" )
-	end
+	end]]
 end
 
 function CreateLevelDisplay_wrap(newEnemy, currentRun)

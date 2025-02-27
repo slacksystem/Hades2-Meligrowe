@@ -1,5 +1,7 @@
 ---@diagnostic disable: undefined-global
 
+print("Hello...?")
+
 GrowTraits = {
 	GrowTrait = 
 	{
@@ -47,8 +49,11 @@ GrowTraits = {
 	},
 }
 
+print("Anyone there...?")
+
 for key, growTrait in pairs(GrowTraits) do
-	ModUtil.Hades.PrintDisplay( "Trying to add custom boon..." )
 	print("Did this run at all...?")
 	TraitData[key] = growTrait
 end
+
+print("We good?")

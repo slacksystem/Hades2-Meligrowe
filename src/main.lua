@@ -42,6 +42,7 @@ local function on_ready()
 	-- what to do when we are ready, but not re-do on reload.
 	if config.enabled == false then return end
 	import 'ready.lua'
+	import 'Data/TraitData_Grow.lua'
 end
 
 local function on_reload()
@@ -51,16 +52,17 @@ local function on_reload()
 end
 
 -- this allows us to limit certain functions to not be reloaded.
-local loader = reload.auto_multiple()
+local loader = reload.auto_single()
 
 -- this runs only when modutil and the game's lua is ready
 modutil.once_loaded.game(function()
-	loader.load('Meligrowe A', on_ready, on_reload)
+	--loader.load('Meligrowe A', on_ready, on_reload)
+	loader.load(on_ready, on_reload)
 end)
 
-local function onTraitData_Grow()
+local function on_TraitData_Grow()
 	if config.enabled == false then return end
-	import 'Data/TraitData_Grow.lua'
+	--import 'Data/TraitData_Grow.lua'
 end
 
-loader.queue.post_import_file('Meligrowe B', onTraitData_Grow)
+--loader.queue.post_import_file('Meligrowe B', 'TraitData_Grow.lua', on_TraitData_Grow)

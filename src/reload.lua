@@ -37,9 +37,31 @@ end
 
 function StartOver_wrap(base, args)
 	base(args)
-	CurrentRun.Hero.Outline = GetOutline()
+	--[[CurrentRun.Hero.Outline = GetOutline()
 	CurrentRun.Hero.Outline.Id = CurrentRun.Hero.ObjectId
-	AddOutline(CurrentRun.Hero.Outline)
+	AddOutline(CurrentRun.Hero.Outline)]]
+	AddTraitToHero({
+						TraitData = GetProcessedTraitData({
+							Unit = CurrentRun.Hero,
+							TraitName = "HeavyArmorBoon",
+							Rarity = "Common"
+						}),
+						SkipNewTraitHighlight = true,
+						SkipQuestStatusCheck = true,
+						SkipActivatedTraitUpdate = true,
+					})
+	AddTraitToHero({
+						TraitData = GetProcessedTraitData({
+							Unit = CurrentRun.Hero,
+							TraitName = "GrowTrait",
+							Rarity = "Common"
+						}),
+						SkipNewTraitHighlight = true,
+						SkipQuestStatusCheck = true,
+						SkipActivatedTraitUpdate = true,
+					})
+	--KNOWN ISSUE: This trait does not stick if you quit before the game autosaves again
+	ModUtil.Hades.PrintDisplay( "I think it worked!" )
 end
 
 function CreateLevelDisplay_wrap(newEnemy, currentRun)

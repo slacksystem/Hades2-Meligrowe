@@ -11,6 +11,7 @@ mods['SGG_Modding-ENVY'].auto()
 -- ^ this gives us `public` and `import`, among others
 --	and makes all globals we define private to this plugin.
 ---@diagnostic disable: lowercase-global
+---@diagnostic disable: undefined-global
 
 ---@diagnostic disable-next-line: undefined-global
 rom = rom

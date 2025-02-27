@@ -1,6 +1,9 @@
+---@diagnostic disable: undefined-global
+
 GrowTraits = {
 	GrowTrait = 
 	{
+		InheritFrom = {"BaseCurse"},
 		Icon = "Boon_Circe_02",
 		--BaseChipmunkValue = -0.43,
 		--[[SetupFunction = 
@@ -46,4 +49,8 @@ GrowTraits = {
 
 for key, growTrait in pairs(GrowTraits) do
 	TraitData[key] = growTrait
+end
+
+for key, keepsake in pairs(Keepsakes) do
+	TraitData[key] = keepsake
 end

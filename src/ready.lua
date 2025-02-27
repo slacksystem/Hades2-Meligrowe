@@ -1,6 +1,7 @@
 ---@meta _
 -- globals we define are private to our plugin!
 ---@diagnostic disable: lowercase-global
+---@diagnostic disable: undefined-global
 
 -- here is where your mod sets up all the things it will do.
 -- this file will not be reloaded if it changes during gameplay

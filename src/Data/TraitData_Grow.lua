@@ -17,6 +17,7 @@ local text_to_insert = sjson.to_object({
 local textfile = rom.path.combine(rom.paths.Content, 'Game/Text/en/TraitText.en.sjson')
 
 sjson.hook(textfile, function(sjsonData)
+---@diagnostic disable-next-line: param-type-mismatch
 	table.insert(sjsonData.Texts, text_to_insert)
 end)
 

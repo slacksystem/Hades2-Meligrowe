@@ -10,9 +10,7 @@
 
 OnAnyLoad {
 	function (triggerArgs)
-		if CurrentRun.Hero ~= nil then
-			--haha nothing
-		end
+		
 	end
 }
 

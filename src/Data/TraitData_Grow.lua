@@ -1,5 +1,25 @@
 ---@diagnostic disable: undefined-global
 
+local order = {
+	'Id',
+	'InheritFrom',
+	'DisplayName',
+	'Description',
+}
+
+local text_to_insert = sjson.to_object({
+	Id = "GrowTrait",
+	InheritFrom = "BaseBoon",
+	DisplayName = "Increasing Heft",
+	Description = "After each {$Keywords.EncounterAlt}, get bigger.",
+}, order)
+
+local textfile = rom.path.combine(rom.paths.Content, 'Game/Text/en/TraitText.en.sjson')
+
+sjson.hook(textfile, function(sjsonData)
+	table.insert(sjsonData.Texts, text_to_insert)
+end)
+
 GrowTraits = {
 	GrowTrait = 
 	{

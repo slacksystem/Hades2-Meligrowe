@@ -11,7 +11,7 @@
 OnAnyLoad {
 	function (triggerArgs)
 		if CurrentRun.Hero ~= nil then
-			print("bee")
+			--haha nothing
 		end
 	end
 }

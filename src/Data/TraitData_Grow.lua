@@ -11,7 +11,7 @@ local text_to_insert = sjson.to_object({
 	Id = "GrowTrait",
 	InheritFrom = "BaseBoon",
 	DisplayName = "Increasing Heft",
-	Description = "After each {$Keywords.EncounterAlt}, get bigger.",
+	Description = "{#UpgradeFormat}{$TooltipData.ExtractData.CurrentMelSize:P} {#Prev}size. After each {$Keywords.EncounterAlt}, gains {#BoldFormatGraft}+{$TooltipData.ExtractData.MelSizeIncreasePerRoom:F} {#Prev}more size.",
 }, order)
 
 local textfile = rom.path.combine(rom.paths.Content, 'Game/Text/en/TraitText.en.sjson')
@@ -23,7 +23,7 @@ end)
 GrowTraits = {
 	GrowTrait = 
 	{
-		InheritFrom = {"BaseCurse"},
+		--InheritFrom = {"BaseCurse"},
 		Icon = "Boon_Circe_02",
 		--BaseChipmunkValue = -0.43,
 		--[[SetupFunction = 
@@ -44,24 +44,22 @@ GrowTraits = {
 			ValidWeaponMultiplier = 1.15,
 			ReportValues = {ReportedMultiplier = "ValidWeaponMultiplier"}
 		},]]
-		
-		RoomsPerUpgrade = 
-		{ 
-			Amount = 1,
-			MaxMana = 5,
-			ReportValues = 
-			{ 
-				ReportedGrowth = "MaxMana", 
-			},
-
-		},
-		CurrentRoom = 0,
+		GrowTraitGrowthPerRoom = { BaseValue = config.sizeGrowthPerRoom, DecimalPlaces = 3 },
+		GrowTraitValue = config.startingSize,
 		ExtractValues = 
 		{
 			{
-				Key = "ReportedGrowth",
-				ExtractAs = "GrowthValue",
-				IncludeSigns = true,
+				Key = "GrowTraitGrowthPerRoom",
+				ExtractAs = "MelSizeIncreasePerRoom",
+				Format = "Percent",
+				DecimalPlaces = 2,
+			},
+			{
+				SkipAutoExtract = true,
+				Key = "GrowTraitValue",
+				ExtractAs = "CurrentMelSize",
+				Format = "PercentDelta",
+				DecimalPlaces = 2,
 			},
 		},
 	},

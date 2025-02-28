@@ -8,16 +8,6 @@
 
 function StartOver_wrap(base, args)
 	base(args)
-	AddTraitToHero({
-						TraitData = GetProcessedTraitData({
-							Unit = CurrentRun.Hero,
-							TraitName = "HeavyArmorBoon",
-							Rarity = "Common"
-						}),
-						SkipNewTraitHighlight = true,
-						SkipQuestStatusCheck = true,
-						SkipActivatedTraitUpdate = true,
-					})
 	local testTrait = AddTraitToHero({
 						TraitData = GetProcessedTraitData({
 							Unit = CurrentRun.Hero,

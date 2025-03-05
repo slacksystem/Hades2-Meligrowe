@@ -23,7 +23,7 @@ modutil.mod.Path.Wrap("ApplyTraitSetupFunctions", function(base, unit, args)
 	base(unit, args)
 
 	--Applying in the same context as setup functions usually run (e.g. Circe's actual boons)
-	if unit == CurrentRun.Hero and HeroHasTrait("GrowTrait") then
+	if unit == CurrentRun.Hero and HeroHasTrait("GrowTrait") and (not args or (args and not args.Context)) then
 		print("Found the modifier...")
 		local trait = GetHeroTrait("GrowTrait")
 		GrowTraitUpdate(unit, trait)
@@ -32,8 +32,6 @@ modutil.mod.Path.Wrap("ApplyTraitSetupFunctions", function(base, unit, args)
 end)
 
 modutil.mod.Path.Wrap("EndEncounterEffects", function(base, currentRun, currentRoom, currentEncounter)
-	base(currentRun, currentRoom, currentEncounter)
-
 	--imitating condition structure from Eris keepsake (funny bell of damage)
 	if currentEncounter == currentRoom.Encounter or currentEncounter == MapState.EncounterOverride then
 		if not currentRoom.BlockClearRewards then
@@ -50,4 +48,6 @@ modutil.mod.Path.Wrap("EndEncounterEffects", function(base, currentRun, currentR
 			end
 		end
 	end
+
+	base(currentRun, currentRoom, currentEncounter)
 end)

@@ -17,3 +17,26 @@ OnAnyLoad {
 modutil.mod.Path.Wrap("StartOver", function(base, args)
 	StartOver_wrap(base, args)
 end)
+
+modutil.mod.Path.Wrap("ApplyTraitSetupFunctions", function(base, unit, args)
+	base(unit, args)
+
+	if unit == CurrentRun.Hero and HeroHasTrait("GrowTrait") then
+		print("Found the modifier...")
+		local trait = GetHeroTrait("GrowTrait")
+		GrowTraitSetup(unit)
+	end
+
+end)
+
+--[[modutil.mod.Path.Wrap("AddTraitData", function(base, unit, traitData, args)
+	local retTrait = base(unit, traitData, args)
+	if retTrait == nil then return end
+
+	if unit == CurrentRun.Hero and retTrait.Name == "GrowTrait" and args.Context == nil then
+		print("Found the modifier...")
+		GrowTraitSetup(unit)
+	end
+
+	return retTrait
+end)]]

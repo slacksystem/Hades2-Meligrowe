@@ -26,21 +26,21 @@ GrowTraits = {
 	{
 		--InheritFrom = {"BaseCurse"},
 		Icon = "Boon_Circe_02",
-		--BaseChipmunkValue = -0.43,
-		--[[SetupFunction = 
+		BaseChipmunkValue = -1.00,
+		SetupFunction = 
 		{
-			Name = "CirceEnlarge",
+			Name = "GrowTraitSetup",
 			Args = 
 			{
-				ScaleMultiplier = 1.25,
-				InitialPresentationFunctionName = "CirceEnlargePresentation",
+				--ScaleMultiplier = 1.25,
+				--InitialPresentationFunctionName = "CirceEnlargePresentation",
 				ReportValues = 
 				{
 					ReportedScale = "Scale",
 				},
 			},
 		},
-		AddOutgoingDamageModifiers = 
+		--[[AddOutgoingDamageModifiers = 
 		{
 			ValidWeaponMultiplier = 1.15,
 			ReportValues = {ReportedMultiplier = "ValidWeaponMultiplier"}

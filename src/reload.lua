@@ -6,8 +6,22 @@
 -- this file will be reloaded if it changes during gameplay,
 -- 	so only assign to values or define things here.
 
---Mostly copy of vanilla function. Modded section marked.
+function GrowTraitSetup( unit )
+	print("Growth trait setup triggered!")
+	--[[roomArgs = roomArgs or {}
+	local duration = args.Duration
+	local skipPresentation = false
+	if roomArgs.Grouped then
+		duration = 0
+	else
+		thread( CirceEnlargePresentation )
+	end]]
+	SetAudioEffectState({ Name = "Chipmunk", Value = GetTotalHeroTraitValue("BaseChipmunkValue") })
+	SetScale({ Id = unit.ObjectId, Fraction = config.startingSize, Duration = 0.5 })
+	unit.EffectVfxScale = config.startingSize
+end
 
+--Mostly copy of vanilla function. Modded section marked.
 function StartOver_wrap(base, args)
 
 	AddInputBlock({ Name = "StartOver" })

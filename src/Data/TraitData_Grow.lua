@@ -26,10 +26,10 @@ GrowTraits = {
 	{
 		--InheritFrom = {"BaseCurse"},
 		Icon = "Boon_Circe_02",
-		BaseChipmunkValue = -1.00,
+		BaseChipmunkValue = config.startingPitch,
 		SetupFunction = 
 		{
-			Name = "GrowTraitSetup",
+			Name = "aaaaaaa", --I don't think this actually does anything but im leaving it
 			Args = 
 			{
 				--ScaleMultiplier = 1.25,
@@ -45,22 +45,23 @@ GrowTraits = {
 			ValidWeaponMultiplier = 1.15,
 			ReportValues = {ReportedMultiplier = "ValidWeaponMultiplier"}
 		},]]
-		GrowTraitGrowthPerRoom = { BaseValue = config.sizeGrowthPerRoom, DecimalPlaces = 3 },
-		GrowTraitValue = config.startingSize,
+		GrowTraitGrowthPerRoom = { BaseValue = config.sizeGrowthPerRoom or 0.03, DecimalPlaces = 3 },
+		GrowTraitValue = config.startingSize or 1,
+		VoicePitchPerRoom = { BaseValue = config.voicePitchChangePerRoom or -0.05, DecimalPlaces = 3 },
 		ExtractValues = 
 		{
 			{
 				Key = "GrowTraitGrowthPerRoom",
 				ExtractAs = "MelSizeIncreasePerRoom",
 				Format = "Percent",
-				DecimalPlaces = 2,
+				DecimalPlaces = 3,
 			},
 			{
 				SkipAutoExtract = true,
 				Key = "GrowTraitValue",
 				ExtractAs = "CurrentMelSize",
 				Format = "PercentDelta",
-				DecimalPlaces = 2,
+				DecimalPlaces = 3,
 			},
 		},
 	},

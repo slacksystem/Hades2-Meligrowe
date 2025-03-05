@@ -14,6 +14,7 @@ OnAnyLoad {
 	end
 }
 
+--puts the funny boon on you at the start of a run (over in reload.lua)
 modutil.mod.Path.Wrap("StartOver", function(base, args)
 	StartOver_wrap(base, args)
 end)
@@ -21,22 +22,32 @@ end)
 modutil.mod.Path.Wrap("ApplyTraitSetupFunctions", function(base, unit, args)
 	base(unit, args)
 
+	--Applying in the same context as setup functions usually run (e.g. Circe's actual boons)
 	if unit == CurrentRun.Hero and HeroHasTrait("GrowTrait") then
 		print("Found the modifier...")
 		local trait = GetHeroTrait("GrowTrait")
-		GrowTraitSetup(unit)
+		GrowTraitUpdate(unit, trait)
 	end
 
 end)
 
---[[modutil.mod.Path.Wrap("AddTraitData", function(base, unit, traitData, args)
-	local retTrait = base(unit, traitData, args)
-	if retTrait == nil then return end
+modutil.mod.Path.Wrap("EndEncounterEffects", function(base, currentRun, currentRoom, currentEncounter)
+	base(currentRun, currentRoom, currentEncounter)
 
-	if unit == CurrentRun.Hero and retTrait.Name == "GrowTrait" and args.Context == nil then
-		print("Found the modifier...")
-		GrowTraitSetup(unit)
+	--imitating condition structure from Eris keepsake (funny bell of damage)
+	if currentEncounter == currentRoom.Encounter or currentEncounter == MapState.EncounterOverride then
+		if not currentRoom.BlockClearRewards then
+			if CurrentRun.Hero ~= nil and HeroHasTrait("GrowTrait") then
+				local trait = GetHeroTrait("GrowTrait")
+				if trait.GrowTraitValue ~= nil and trait.GrowTraitGrowthPerRoom ~= nil then
+					trait.GrowTraitValue = trait.GrowTraitValue + trait.GrowTraitGrowthPerRoom
+					
+				end
+				if trait.BaseChipmunkValue ~= nil and trait.VoicePitchPerRoom ~= nil then
+					trait.BaseChipmunkValue = trait.BaseChipmunkValue + trait.VoicePitchPerRoom
+				end
+				GrowTraitUpdate(CurrentRun.Hero, trait)
+			end
+		end
 	end
-
-	return retTrait
-end)]]
+end)

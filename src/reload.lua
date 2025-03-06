@@ -6,8 +6,19 @@
 -- this file will be reloaded if it changes during gameplay,
 -- 	so only assign to values or define things here.
 
-function GrowTraitUpdate( unit, trait, args)
-	if unit == nil or trait == nil then return end
+--returns false if hero or trait are not found
+function GrowTraitUpdate(args)
+	local unit = nil
+	local trait = nil
+
+	if CurrentRun.Hero ~= nil then
+		unit = CurrentRun.Hero
+		if HeroHasTrait("GrowTrait") then
+			trait = GetHeroTrait("GrowTrait")
+		end
+	end
+
+	if unit == nil or trait == nil then return false end
 
 	trait.GrowTraitValue = (config.startingSize or 1) + trait.GrowLevel * trait.GrowTraitGrowthPerRoom
 	trait.BaseChipmunkValue = (config.startingPitch or 0) + trait.GrowLevel * trait.VoicePitchPerRoom
@@ -39,6 +50,8 @@ function GrowTraitUpdate( unit, trait, args)
 	SetAudioEffectState({ Name = "Chipmunk", Value = chipmunk })
 	SetScale({ Id = unit.ObjectId, Fraction = currentSize, Duration = 0.2 })
 	unit.EffectVfxScale = currentSize
+	
+	return true
 end
 
 --Mostly copy of vanilla function. Modded section marked, adds the funny boon.

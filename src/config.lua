@@ -5,5 +5,5 @@ return {
 	startingSize = 1.00,
 	sizeGrowthPerRoom = 0.015,
 	startingPitch = 0,
-	voicePitchChangePerRoom = -0.025,
+	voicePitchChangePerRoom = -0.022,
 }

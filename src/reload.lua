@@ -7,8 +7,10 @@
 -- 	so only assign to values or define things here.
 
 function GrowTraitUpdate( unit, trait)
-	print("Growth trait setup triggered!")
-	local currentSize = trait.GrowTraitValue or config.startingSize or 1
+	if unit == nil or trait == nil then return end
+
+	trait.GrowTraitValue = (config.startingSize or 1) + trait.GrowLevel * trait.GrowTraitGrowthPerRoom
+	trait.BaseChipmunkValue = (config.startingPitch or 0) + trait.GrowLevel * trait.VoicePitchPerRoom
 	--[[roomArgs = roomArgs or {}
 	local duration = args.Duration
 	local skipPresentation = false
@@ -18,8 +20,8 @@ function GrowTraitUpdate( unit, trait)
 		thread( CirceEnlargePresentation )
 	end]]
 	SetAudioEffectState({ Name = "Chipmunk", Value = GetTotalHeroTraitValue("BaseChipmunkValue") })
-	SetScale({ Id = unit.ObjectId, Fraction = currentSize, Duration = 0.5 })
-	unit.EffectVfxScale = currentSize
+	SetScale({ Id = unit.ObjectId, Fraction = trait.GrowTraitValue, Duration = 0.2 })
+	unit.EffectVfxScale = trait.GrowTraitValue
 end
 
 --Mostly copy of vanilla function. Modded section marked, adds the funny boon.
@@ -90,4 +92,19 @@ function StartOver_wrap(base, args)
 
 	LoadMap({ Name = currentRun.CurrentRoom.Name, ResetBinks = true })
 
+end
+
+function EndEncounterEffects_wrap(base, currentRun, currentRoom, currentEncounter)
+	--imitating condition structure from Eris keepsake (funny bell of damage)
+	if currentEncounter == currentRoom.Encounter or currentEncounter == MapState.EncounterOverride then
+		if not currentRoom.BlockClearRewards then
+			if CurrentRun.Hero ~= nil and HeroHasTrait("GrowTrait") then
+				local trait = GetHeroTrait("GrowTrait")
+				if trait.GrowLevel ~= nil then
+					trait.GrowLevel = trait.GrowLevel + 1
+				end
+				GrowTraitUpdate(CurrentRun.Hero, trait)
+			end
+		end
+	end
 end

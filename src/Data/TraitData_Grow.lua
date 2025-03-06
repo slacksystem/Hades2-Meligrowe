@@ -45,9 +45,10 @@ GrowTraits = {
 			ValidWeaponMultiplier = 1.15,
 			ReportValues = {ReportedMultiplier = "ValidWeaponMultiplier"}
 		},]]
-		GrowTraitGrowthPerRoom = { BaseValue = config.sizeGrowthPerRoom or 0.03, DecimalPlaces = 3 },
+		GrowTraitGrowthPerRoom = { BaseValue = config.sizeGrowthPerRoom or 0.015, DecimalPlaces = 3 },
 		GrowTraitValue = config.startingSize or 1,
-		VoicePitchPerRoom = { BaseValue = config.voicePitchChangePerRoom or -0.05, DecimalPlaces = 3 },
+		VoicePitchPerRoom = { BaseValue = config.voicePitchChangePerRoom or -0.022, DecimalPlaces = 3 },
+		GrowLevel = 0,
 		ExtractValues = 
 		{
 			{
@@ -70,3 +71,5 @@ GrowTraits = {
 for key, growTrait in pairs(GrowTraits) do
 	TraitData[key] = growTrait
 end
+
+table.insert(PersistentTraitKeys, "GrowLevel")

@@ -58,7 +58,3 @@ local loader = reload.auto_single()
 modutil.once_loaded.game(function()
 	loader.load(on_ready, on_reload)
 end)
-
-local function on_TraitData_Grow()
-	if config.enabled == false then return end
-end

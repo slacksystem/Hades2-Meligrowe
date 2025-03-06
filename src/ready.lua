@@ -32,22 +32,6 @@ modutil.mod.Path.Wrap("ApplyTraitSetupFunctions", function(base, unit, args)
 end)
 
 modutil.mod.Path.Wrap("EndEncounterEffects", function(base, currentRun, currentRoom, currentEncounter)
-	--imitating condition structure from Eris keepsake (funny bell of damage)
-	if currentEncounter == currentRoom.Encounter or currentEncounter == MapState.EncounterOverride then
-		if not currentRoom.BlockClearRewards then
-			if CurrentRun.Hero ~= nil and HeroHasTrait("GrowTrait") then
-				local trait = GetHeroTrait("GrowTrait")
-				if trait.GrowTraitValue ~= nil and trait.GrowTraitGrowthPerRoom ~= nil then
-					trait.GrowTraitValue = trait.GrowTraitValue + trait.GrowTraitGrowthPerRoom
-					
-				end
-				if trait.BaseChipmunkValue ~= nil and trait.VoicePitchPerRoom ~= nil then
-					trait.BaseChipmunkValue = trait.BaseChipmunkValue + trait.VoicePitchPerRoom
-				end
-				GrowTraitUpdate(CurrentRun.Hero, trait)
-			end
-		end
-	end
-
-	base(currentRun, currentRoom, currentEncounter)
+	EndEncounterEffects_wrap(base, currentRun, currentRoom, currentEncounter)
+	return base(currentRun, currentRoom, currentEncounter)
 end)

@@ -15,8 +15,10 @@ OnAnyLoad {
 }
 
 --puts the funny boon on you at the start of a run (over in reload.lua)
-modutil.mod.Path.Wrap("StartOver", function(base, args)
-	StartOver_wrap(base, args)
+modutil.mod.Path.Wrap("StartNewRun", function(base, prevRun, args)
+	local retVar = base(prevRun, args)
+	StartNewRun_wrap(base, prevRun, args)
+	return retVar
 end)
 
 modutil.mod.Path.Wrap("ApplyTraitSetupFunctions", function(base, unit, args)

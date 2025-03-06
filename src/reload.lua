@@ -6,7 +6,7 @@
 -- this file will be reloaded if it changes during gameplay,
 -- 	so only assign to values or define things here.
 
-function GrowTraitUpdate( unit, trait)
+function GrowTraitUpdate( unit, trait, args)
 	if unit == nil or trait == nil then return end
 
 	trait.GrowTraitValue = (config.startingSize or 1) + trait.GrowLevel * trait.GrowTraitGrowthPerRoom
@@ -19,9 +19,26 @@ function GrowTraitUpdate( unit, trait)
 	else
 		thread( CirceEnlargePresentation )
 	end]]
-	SetAudioEffectState({ Name = "Chipmunk", Value = GetTotalHeroTraitValue("BaseChipmunkValue") })
-	SetScale({ Id = unit.ObjectId, Fraction = trait.GrowTraitValue, Duration = 0.2 })
-	unit.EffectVfxScale = trait.GrowTraitValue
+
+	local chipmunk = GetTotalHeroTraitValue("BaseChipmunkValue")
+	local currentSize = trait.GrowTraitValue
+
+	if args ~= nil and args.Transformed == true then
+		--make voice deeper when in Dark Side
+		if chipmunk >= 0 then
+			chipmunk = chipmunk - 0.8
+		else
+			--so basically diminishing returns (until chipmunk - 0.1 breaks even)
+			local chipmunkScaling = -0.8 + chipmunk * 0.250
+			chipmunk = math.min(chipmunk - 0.2, chipmunkScaling)
+		end
+
+		currentSize = math.max(currentSize * 1.1, 1.1)
+	end
+
+	SetAudioEffectState({ Name = "Chipmunk", Value = chipmunk })
+	SetScale({ Id = unit.ObjectId, Fraction = currentSize, Duration = 0.2 })
+	unit.EffectVfxScale = currentSize
 end
 
 --Mostly copy of vanilla function. Modded section marked, adds the funny boon.
@@ -51,4 +68,8 @@ function EndEncounterEffects_wrap(base, currentRun, currentRoom, currentEncounte
 			end
 		end
 	end
+end
+
+function SpellTransformStartPresentation_wrap(base, user, weaponData, functionArgs, triggerArgs)
+
 end

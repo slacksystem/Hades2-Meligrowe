@@ -26,7 +26,6 @@ modutil.mod.Path.Wrap("ApplyTraitSetupFunctions", function(base, unit, args)
 
 	--Applying in the same context as setup functions usually run (e.g. Circe's actual boons)
 	if unit == CurrentRun.Hero and HeroHasTrait("GrowTrait") and (not args or (args and not args.Context)) then
-		print("Found the modifier...")
 		local trait = GetHeroTrait("GrowTrait")
 		GrowTraitUpdate(unit, trait)
 	end
@@ -36,4 +35,25 @@ end)
 modutil.mod.Path.Wrap("EndEncounterEffects", function(base, currentRun, currentRoom, currentEncounter)
 	EndEncounterEffects_wrap(base, currentRun, currentRoom, currentEncounter)
 	return base(currentRun, currentRoom, currentEncounter)
+end)
+
+modutil.mod.Path.Wrap("SpellTransformStartPresentation", function(base, user, weaponData, functionArgs, triggerArgs)
+	if unit == CurrentRun.Hero and HeroHasTrait("GrowTrait") then
+		local trait = GetHeroTrait("GrowTrait")
+		GrowTraitUpdate(unit, trait, { Transformed = true })
+	else
+		return base(user, weaponData, functionArgs, triggerArgs)
+	end
+	PlaySound({ Name = "/VO/MelinoeEmotes/EmoteAttackingAxe", Id = CurrentRun.Hero.ObjectId })
+end)
+
+modutil.mod.Path.Wrap("SpellTransformEndPresentation", function(base, user, weaponData, functionArgs, triggerArgs)
+	if unit == CurrentRun.Hero and HeroHasTrait("GrowTrait") then
+		local trait = GetHeroTrait("GrowTrait")
+		GrowTraitUpdate(unit, trait)
+	else
+		return base(user, weaponData, functionArgs, triggerArgs)
+	end
+	PlaySound({ Name = "/SFX/TimeSlowEnd", Id = CurrentRun.Hero.ObjectId })
+	PlaySound({ Name = "/VO/MelinoeEmotes/EmoteGasping", Id = CurrentRun.Hero.ObjectId })
 end)

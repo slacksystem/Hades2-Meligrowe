@@ -45,14 +45,15 @@ GrowTraits = {
 			ValidWeaponMultiplier = 1.15,
 			ReportValues = {ReportedMultiplier = "ValidWeaponMultiplier"}
 		},]]
-		GrowTraitGrowthPerRoom = { BaseValue = config.sizeGrowthPerRoom or 0.015, DecimalPlaces = 3 },
+		GrowTraitGrowthPerRoom = { BaseValue = config.sizeGrowthPerRoom or 0.018, DecimalPlaces = 3 },
+		GrowTraitGrowthPerRoomDisplay = { BaseValue = config.sizeGrowthPerRoom or 0.018, DecimalPlaces = 3 },
 		GrowTraitValue = config.startingSize or 1,
-		VoicePitchPerRoom = { BaseValue = config.voicePitchChangePerRoom or -0.022, DecimalPlaces = 3 },
+		VoicePitchPerRoom = { BaseValue = config.voicePitchChangePerRoom or -0.025, DecimalPlaces = 3 },
 		GrowLevel = 0,
 		ExtractValues = 
 		{
 			{
-				Key = "GrowTraitGrowthPerRoom",
+				Key = "GrowTraitGrowthPerRoomDisplay",
 				ExtractAs = "MelSizeIncreasePerRoom",
 				Format = "Percent",
 				DecimalPlaces = 3,

@@ -50,3 +50,13 @@ modutil.mod.Path.Wrap("SpellTransformEndPresentation", function(base, user, weap
 	PlaySound({ Name = "/SFX/TimeSlowEnd", Id = CurrentRun.Hero.ObjectId })
 	PlaySound({ Name = "/VO/MelinoeEmotes/EmoteGasping", Id = CurrentRun.Hero.ObjectId })
 end)
+
+modutil.mod.Path.Wrap("CirceEnlarge", function(base, unit, args, roomArgs)
+	base(unit, args, roomArgs)
+	GrowTraitUpdate()
+end)
+
+modutil.mod.Path.Wrap("CirceShrink", function(base, unit, args, roomArgs)
+	base(unit, args, roomArgs)
+	GrowTraitUpdate()
+end)

@@ -31,11 +31,37 @@ function GrowTraitUpdate(args)
 		thread( CirceEnlargePresentation )
 	end]]
 
+	trait.GrowTraitGrowthPerRoomDisplay = trait.GrowTraitGrowthPerRoom
+
+	if HeroHasTrait("CirceEnlargeTrait") then
+		trait.GrowTraitValue = trait.GrowTraitValue * 1.25
+		trait.GrowTraitGrowthPerRoomDisplay = trait.GrowTraitGrowthPerRoom * 1.25
+		trait.BaseChipmunkValue = trait.BaseChipmunkValue - 0.2
+	end
+
+	if HeroHasTrait("CirceShrinkTrait") then
+		trait.GrowTraitValue = trait.GrowTraitValue * 0.75
+		trait.GrowTraitGrowthPerRoomDisplay = trait.GrowTraitGrowthPerRoom * 0.75
+		trait.BaseChipmunkValue = trait.BaseChipmunkValue + 0.3
+	end
+
+	if config.voicePitchLowerLimit ~= nil then
+		trait.BaseChipmunkValue = math.max(trait.BaseChipmunkValue, config.voicePitchLowerLimit)
+	end
+
+	if config.voicePitchUpperLimit ~= nil then
+		trait.BaseChipmunkValue = math.min(trait.BaseChipmunkValue, config.voicePitchUpperLimit)
+	end
+
+	if trait.GrowTraitValue <= 0.1 then
+		trait.GrowTraitValue = 0.1
+	end
+
 	local chipmunk = GetTotalHeroTraitValue("BaseChipmunkValue")
 	local currentSize = trait.GrowTraitValue
 
 	if args ~= nil and args.Transformed == true then
-		--make voice deeper when in Dark Side
+		--make voice deeper when in Dark Side. ignores set pitch cap.
 		if chipmunk >= 0 then
 			chipmunk = chipmunk - 0.8
 		else
@@ -44,7 +70,7 @@ function GrowTraitUpdate(args)
 			chipmunk = math.min(chipmunk - 0.2, chipmunkScaling)
 		end
 
-		currentSize = math.max(currentSize * 1.1, 1.1)
+		currentSize = currentSize * 1.1
 	end
 
 	SetAudioEffectState({ Name = "Chipmunk", Value = chipmunk })

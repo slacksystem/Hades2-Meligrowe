@@ -14,10 +14,37 @@ OnAnyLoad {
 	end
 }
 
+--Debug
+rom.inputs.on_key_pressed{"None H", function()
+		AddGrowTraitToHero(true)
+	end
+}
+
+rom.inputs.on_key_pressed{"None J", function()
+		GrowHero({ sizeAbsolute = true })
+	end
+}
+
+rom.inputs.on_key_pressed{"None K", function()
+		GrowHero({ doPresentation = true })
+	end
+}
+
+rom.inputs.on_key_pressed{"None L", function()
+		GrowHero({ changeValue = 2, doPresentation = true })
+	end
+}
+
+
+
 --puts the funny boon on you at the start of a run (over in reload.lua)
 modutil.mod.Path.Wrap("StartNewRun", function(base, prevRun, args)
 	local retVar = base(prevRun, args)
-	StartNewRun_wrap(base, prevRun, args)
+	local skipUI = false
+	if prevRun == nil then --fix for crash on new save files
+		skipUI = true
+	end
+	AddGrowTraitToHero(skipUI)
 	return retVar
 end)
 

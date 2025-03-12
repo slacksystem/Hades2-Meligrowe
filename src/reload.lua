@@ -80,9 +80,48 @@ function GrowTraitUpdate(args)
 	return true
 end
 
---Mostly copy of vanilla function. Modded section marked, adds the funny boon.
-function StartNewRun_wrap(base, prevRun, args)
-	local testTrait = AddTraitToHero({
+function GrowHero(args)
+	local changeValue = 1
+	local changeValueAbs = 0
+	local sizeAbsolute = false
+	local doPresentation = false
+	if args then
+		changeValue = args.changeValue or 1
+		changeValueAbs = args.changeValue or 0
+		sizeAbsolute = args.sizeAbsolute or false
+		doPresentation = doPresentation or false
+	end
+	if CurrentRun.Hero ~= nil and HeroHasTrait("GrowTrait") then
+		local trait = GetHeroTrait("GrowTrait")
+		if trait.GrowLevel ~= nil then
+			if not sizeAbsolute then
+				trait.GrowLevel = trait.GrowLevel + changeValue
+			else
+				trait.GrowLevel = changeValueAbs
+			end
+		end
+		GrowTraitUpdate()
+	end
+
+	if args and args.doPresentation == true then
+		thread(function()
+			PlaySound({ Name = "/Leftovers/Menu Sounds/StarSelectConfirm" })
+			wait( 0.02 )
+		
+			local roomData = RoomData[CurrentRun.CurrentRoom.Name] or CurrentRun.CurrentRoom
+			local globalVoiceLines = GlobalVoiceLines[roomData.CloseTalentScreenGlobalVoiceLines] or GlobalVoiceLines.TalentDropUsedVoiceLines
+			thread( PlayVoiceLines, globalVoiceLines, true )
+		
+			ShakeScreen({ Speed = 1000, Distance = 2, Duration = 0.3 })
+			thread( DoRumble, { { ScreenPreWait = 0.02, LeftFraction = 0.3, Duration = 0.3 }, } )
+			SetAnimation({ Name = "MelinoeBoonInteractPowerUp", DestinationId = CurrentRun.Hero.ObjectId })
+			CreateAnimation({ Name = "ItemGet", DestinationId = CurrentRun.Hero.ObjectId, Scale = 2.0 })
+		end)
+	end
+end
+
+function AddGrowTraitToHero(skipUI)
+	AddTraitToHero({
 		TraitData = GetProcessedTraitData({
 			Unit = CurrentRun.Hero,
 			TraitName = "GrowTrait",
@@ -91,6 +130,7 @@ function StartNewRun_wrap(base, prevRun, args)
 		SkipNewTraitHighlight = true,
 		SkipQuestStatusCheck = true,
 		SkipActivatedTraitUpdate = true,
+		SkipUIUpdate = skipUI,
 	})
 end
 
@@ -98,17 +138,7 @@ function EndEncounterEffects_wrap(base, currentRun, currentRoom, currentEncounte
 	--imitating condition structure from Eris keepsake (funny bell of damage)
 	if currentEncounter == currentRoom.Encounter or currentEncounter == MapState.EncounterOverride then
 		if not currentRoom.BlockClearRewards then
-			if CurrentRun.Hero ~= nil and HeroHasTrait("GrowTrait") then
-				local trait = GetHeroTrait("GrowTrait")
-				if trait.GrowLevel ~= nil then
-					trait.GrowLevel = trait.GrowLevel + 1
-				end
-				GrowTraitUpdate(CurrentRun.Hero, trait)
-			end
+			GrowHero()
 		end
 	end
-end
-
-function SpellTransformStartPresentation_wrap(base, user, weaponData, functionArgs, triggerArgs)
-
 end

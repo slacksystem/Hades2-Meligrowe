@@ -105,7 +105,7 @@ function GrowHero(args)
 
 	if args and args.doPresentation == true then
 		thread(function()
-			PlaySound({ Name = "/Leftovers/Menu Sounds/StarSelectConfirm" })
+			PlaySound({ Name = "/SFX/HealthIncreasePickup" })
 			wait( 0.02 )
 		
 			local roomData = RoomData[CurrentRun.CurrentRoom.Name] or CurrentRun.CurrentRoom
@@ -115,7 +115,7 @@ function GrowHero(args)
 			ShakeScreen({ Speed = 1000, Distance = 2, Duration = 0.3 })
 			thread( DoRumble, { { ScreenPreWait = 0.02, LeftFraction = 0.3, Duration = 0.3 }, } )
 			SetAnimation({ Name = "MelinoeBoonInteractPowerUp", DestinationId = CurrentRun.Hero.ObjectId })
-			CreateAnimation({ Name = "ItemGet", DestinationId = CurrentRun.Hero.ObjectId, Scale = 2.0 })
+			CreateAnimation({ Name = "HealthSparkleShower", DestinationId = CurrentRun.Hero.ObjectId })
 		end)
 	end
 end
@@ -138,7 +138,7 @@ function EndEncounterEffects_wrap(base, currentRun, currentRoom, currentEncounte
 	--imitating condition structure from Eris keepsake (funny bell of damage)
 	if currentEncounter == currentRoom.Encounter or currentEncounter == MapState.EncounterOverride then
 		if not currentRoom.BlockClearRewards then
-			GrowHero()
+			GrowHero({ doPresentation = true })
 		end
 	end
 end

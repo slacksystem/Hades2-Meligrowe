@@ -31,7 +31,7 @@ function GrowTraitUpdate(args)
 		thread( CirceEnlargePresentation )
 	end]]
 
-	trait.GrowTraitGrowthPerRoomDisplay = trait.GrowTraitGrowthPerRoom
+	trait.GrowTraitGrowthPerRoomDisplay = trait.GrowTraitGrowthPerRoom * (config.growEveryXRooms or 2)
 
 	if HeroHasTrait("CirceEnlargeTrait") then
 		trait.GrowTraitValue = trait.GrowTraitValue * 1.25
@@ -73,6 +73,8 @@ function GrowTraitUpdate(args)
 		currentSize = currentSize * 1.1
 	end
 
+	CurrentRun.Hero.trackedScale = currentSize --this exists to allow dialogue to interact
+
 	SetAudioEffectState({ Name = "Chipmunk", Value = chipmunk })
 	SetScale({ Id = unit.ObjectId, Fraction = currentSize, Duration = 0.2 })
 	unit.EffectVfxScale = currentSize
@@ -105,22 +107,24 @@ function GrowHero(args)
 
 	if args and args.doPresentation == true then
 		thread(function()
-			PlaySound({ Name = "/SFX/HealthIncreasePickup" })
+			PlaySound({ Name = "/SFX/Enemy Sounds/Wringer/WringerChargeUp" })
 			wait( 0.02 )
 		
-			local roomData = RoomData[CurrentRun.CurrentRoom.Name] or CurrentRun.CurrentRoom
-			local globalVoiceLines = GlobalVoiceLines[roomData.CloseTalentScreenGlobalVoiceLines] or GlobalVoiceLines.TalentDropUsedVoiceLines
-			thread( PlayVoiceLines, globalVoiceLines, true )
+			local globalVoiceLines = GlobalVoiceLines.GrowBiggerVoiceLines
+			thread( PlayVoiceLines, globalVoiceLines, false )
 		
 			ShakeScreen({ Speed = 1000, Distance = 2, Duration = 0.3 })
 			thread( DoRumble, { { ScreenPreWait = 0.02, LeftFraction = 0.3, Duration = 0.3 }, } )
 			SetAnimation({ Name = "MelinoeBoonInteractPowerUp", DestinationId = CurrentRun.Hero.ObjectId })
 			CreateAnimation({ Name = "HealthSparkleShower", DestinationId = CurrentRun.Hero.ObjectId })
+
+			thread( InCombatTextArgs, { TargetId = CurrentRun.Hero.ObjectId, Text = "GrowPopUp", PreDelay = 0.35, Duration = 1.5, Cooldown = 1.0 } )
 		end)
 	end
 end
 
 function AddGrowTraitToHero(skipUI)
+	CurrentRun.Hero.trackedScale = 1.0 --this exists to allow dialogue to interact
 	AddTraitToHero({
 		TraitData = GetProcessedTraitData({
 			Unit = CurrentRun.Hero,
@@ -135,10 +139,14 @@ function AddGrowTraitToHero(skipUI)
 end
 
 function EndEncounterEffects_wrap(base, currentRun, currentRoom, currentEncounter)
+	if not HeroHasTrait("GrowTrait") then return end
+	
+	local trait = GetHeroTrait("GrowTrait")
+
 	--imitating condition structure from Eris keepsake (funny bell of damage)
 	if currentEncounter == currentRoom.Encounter or currentEncounter == MapState.EncounterOverride then
-		if not currentRoom.BlockClearRewards then
-			GrowHero({ doPresentation = true })
+		if trait.CurrentRoom == trait.RoomsPerUpgrade.Amount - 1  then
+				GrowHero({ changeValue = (config.growEveryXRooms or 2), doPresentation = true })
 		end
 	end
 end

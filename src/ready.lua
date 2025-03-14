@@ -31,7 +31,7 @@ rom.inputs.on_key_pressed{"None K", function()
 }
 
 rom.inputs.on_key_pressed{"None L", function()
-	GrowHero({ changeValue = 3, doPresentation = true })
+	GrowHero({ changeValue = 2, doPresentation = true })
 end
 }
 
@@ -57,9 +57,15 @@ modutil.mod.Path.Wrap("ApplyTraitSetupFunctions", function(base, unit, args)
 
 end)
 
-modutil.mod.Path.Wrap("EndEncounterEffects", function(base, currentRun, currentRoom, currentEncounter)
+--[[modutil.mod.Path.Wrap("EndEncounterEffects", function(base, currentRun, currentRoom, currentEncounter)
 	EndEncounterEffects_wrap(base, currentRun, currentRoom, currentEncounter)
 	return base(currentRun, currentRoom, currentEncounter)
+end)]]
+
+modutil.mod.Path.Wrap("CheckChamberTraits", function(base)
+	local retVal = base()
+	CheckChamberTraits_wrap(base)
+	return retVal
 end)
 
 modutil.mod.Path.Wrap("SpellTransformStartPresentation", function(base, user, weaponData, functionArgs, triggerArgs)

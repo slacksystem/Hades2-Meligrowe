@@ -138,15 +138,19 @@ function AddGrowTraitToHero(skipUI)
 	})
 end
 
-function EndEncounterEffects_wrap(base, currentRun, currentRoom, currentEncounter)
+function CheckChamberTraits_wrap(base)
 	if not HeroHasTrait("GrowTrait") then return end
 	
 	local trait = GetHeroTrait("GrowTrait")
 
-	--imitating condition structure from Eris keepsake (funny bell of damage)
+	if trait.CurrentRoom == 0 then
+		GrowHero({ changeValue = (config.growEveryXRooms or 2), doPresentation = true })
+	end
+
+	--[[imitating condition structure from Eris keepsake (funny bell of damage)
 	if currentEncounter == currentRoom.Encounter or currentEncounter == MapState.EncounterOverride then
 		if trait.CurrentRoom == trait.RoomsPerUpgrade.Amount - 1  then
 				GrowHero({ changeValue = (config.growEveryXRooms or 2), doPresentation = true })
 		end
-	end
+	end]]
 end

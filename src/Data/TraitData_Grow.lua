@@ -50,7 +50,7 @@ GlobalVoiceLines.GrowBiggerVoiceLines =
 			{
 				Path = { "CurrentRun", "Hero", "trackedScale" },
 				Comparison = ">=",
-				Value = 1.5,
+				Value = 1.6,
 			},
 		},
 
@@ -63,13 +63,10 @@ GlobalVoiceLines.GrowBiggerVoiceLines =
 		SkipCooldownCheckIfNonePlayed = true,
 		TriggerCooldowns = { Name = "MelinoeAnyQuipSpeech" },
 
-		{ Cue = "/VO/Melinoe_3526", Text = "I'm huge..." , PlayFirst = true},
-		{ Cue = "/VO/Melinoe_2595", Text = "You're all grown up." },
-		{ Cue = "/VO/Melinoe_2596", Text = "Sprang up so fast." },
+		{ Cue = "/VO/Melinoe_3526", Text = "I'm huge..." , PlayFirst = true },
+		{ Cue = "/VO/MelinoeField_2054", Text = "I'm Titan-sized..." },
 		{ Cue = "/VO/Melinoe_2597", Text = "How tall you've grown..." },
 		{ Cue = "/VO/Melinoe_2598", Text = "You're a sight to behold." },
-		{ Cue = "/VO/Melinoe_2371", Text = "Full grown." },
-		{ Cue = "/VO/Melinoe_2372", Text = "All grown up." },
 	},
 	{
 		--Uses same requirements as picking up a boon.
@@ -102,28 +99,31 @@ GlobalVoiceLines.GrowBiggerVoiceLines =
 		--SuccessiveChanceToPlay = 0.33,
 		UsePlayerSource = true,
 		SkipCooldownCheckIfNonePlayed = true,
-		Cooldowns =
+		--[[Cooldowns =
 		{
 			{ Name = "MelinoeGrowBigger", Time = 30 },
 		},
-		TriggerCooldowns = { Name = "MelinoeAnyQuipSpeech" },
+		TriggerCooldowns = { Name = "MelinoeAnyQuipSpeech" },]]
 
 		{ Cue = "/VO/Melinoe_2593", Text = "You'll grow up in no time.", PlayFirst = true},
 		{ Cue = "/VO/Melinoe_0200", Text = "Greater strength." },
 		{ Cue = "/VO/Melinoe_0208", Text = "{#Emph}Hm!" },
 		{ Cue = "/VO/Melinoe_0212", Text = "I grow strong." },
-		{ Cue = "/VO/Melinoe_0213", Text = "Greater might..." },
 		{ Cue = "/VO/Melinoe_2359", Text = "Grow strong." },
 		{ Cue = "/VO/Melinoe_2360", Text = "Grow and flourish." },
 		{ Cue = "/VO/Melinoe_2304", Text = "Grow and thrive." },
 		{ Cue = "/VO/Melinoe_2303", Text = "You're growing strong." },
 		{ Cue = "/VO/Melinoe_0569", Text = "{#Emph}<Inhale>" },
 		{ Cue = "/VO/Melinoe_2306", Text = "Drink deep and grow tall." },
-		{ Cue = "/VO/Melinoe_1515", Text = "Beautiful." },
 		{ Cue = "/VO/Melinoe_3279", Text = "Wow..." },
 		{ Cue = "/VO/Melinoe_3284", Text = "Huh..." },
-		{ Cue = "/VO/Melinoe_0580", Text = "{#Emph}Ugh..." },
 		{ Cue = "/VO/Melinoe_0761", Text = "{#Emph}Ungh..." },
+		{ Cue = "/VO/MelinoeField_1895", Text = "That's potent..." },
+		{ Cue = "/VO/MelinoeField_1896", Text = "{#Emph}Ooh..." },
+		{ Cue = "/VO/MelinoeField_2050", Text = "Am I...? Oh." },
+		{ Cue = "/VO/MelinoeField_2051", Text = "I feel a little off..." },
+		{ Cue = "/VO/MelinoeField_1897", Text = "Felt that for sure..." },
+		{ Cue = "/VO/MelinoeField_2052", Text = "What have I done..." },
 	},
 }
 

@@ -57,16 +57,27 @@ GlobalVoiceLines.GrowBiggerVoiceLines =
 		Queue = "Interrupt",
 		BreakIfPlayed = true,
 		RandomRemaining = true,
-		PreLineWait = 0.2,
-		--SuccessiveChanceToPlay = 0.25,
+		PreLineWait = 0.35,
+		--SuccessiveChanceToPlay = 0.5,
 		UsePlayerSource = true,
 		SkipCooldownCheckIfNonePlayed = true,
-		TriggerCooldowns = { Name = "MelinoeAnyQuipSpeech" },
+		--[[Cooldowns =
+		{
+			{ Name = "MelinoeGrewBiggerRecently", Time = 5 },
+		},]]
+		TriggerCooldowns = { "MelinoeAnyQuipSpeech", "MelCombatResolvedSpeech", Time = 4 },
 
 		{ Cue = "/VO/Melinoe_3526", Text = "I'm huge..." , PlayFirst = true },
 		{ Cue = "/VO/MelinoeField_2054", Text = "I'm Titan-sized..." },
 		{ Cue = "/VO/Melinoe_2597", Text = "How tall you've grown..." },
 		{ Cue = "/VO/Melinoe_2598", Text = "You're a sight to behold." },
+		{ Cue = "/VO/Melinoe_1410", Text = "How do I look?"},
+		{ Cue = "/VO/Melinoe_0350", Text = "{#Emph}<Laugh>" },
+		{ Cue = "/VO/Melinoe_0351", Text = "{#Emph}<Laugh>" },
+		{ Cue = "/VO/MelinoeField_2052", Text = "What have I done..." },
+		{ Cue = "/VO/Melinoe_2552", Text = "Become even stronger." },
+		{ Cue = "/VO/MelinoeField_1600", Text = "Such power..." },
+		{ Cue = "/VO/Melinoe_3594", Text = "Well look at you!" },
 	},
 	{
 		--Uses same requirements as picking up a boon.
@@ -74,7 +85,7 @@ GlobalVoiceLines.GrowBiggerVoiceLines =
 		{
 			{
 				Path = { "CurrentRun", "CurrentRoom", "Encounter", "Name" },
-				IsNone = { "Shop", "DevotionTestF", "DevotionTestG", "DevotionTestH", "DevotionTestN", "DevotionTestO", "DevotionTestP", "ArtemisCombatIntro",
+				IsNone = { "Shop", "DevotionTestF", "DevotionTestG", "DevotionTestH", "DevotionTestN", "DevotionTestO", "DevotionTestP", --[["ArtemisCombatIntro",
 					"ArtemisCombatF", "ArtemisCombatF2",
 					"ArtemisCombatG", "ArtemisCombatG2",
 					"ArtemisCombatN", "ArtemisCombatN2",
@@ -84,7 +95,7 @@ GlobalVoiceLines.GrowBiggerVoiceLines =
 					"NemesisCombatF", "NemesisCombatG",
 					"NemesisCombatH", "IcarusCombatO",
 					"IcarusCombatO2", "IcarusCombatP",
-					"IcarusCombatP2", },
+					"IcarusCombatP2", ]]},
 			},
 			{
 				Path = { "CurrentRun", "CurrentRoom", "Name" },
@@ -95,15 +106,16 @@ GlobalVoiceLines.GrowBiggerVoiceLines =
 		Queue = "Interrupt",
 		BreakIfPlayed = true,
 		RandomRemaining = true,
-		PreLineWait = 0.2,
+		PreLineWait = 0.35,
 		--SuccessiveChanceToPlay = 0.33,
 		UsePlayerSource = true,
 		SkipCooldownCheckIfNonePlayed = true,
 		--[[Cooldowns =
 		{
-			{ Name = "MelinoeGrowBigger", Time = 30 },
-		},
-		TriggerCooldowns = { Name = "MelinoeAnyQuipSpeech" },]]
+			{ Name = "MelinoeGrewBiggerRecently", Time = 5 },
+		},]]
+		TriggerCooldowns = { "MelinoeAnyQuipSpeech", "MelCombatResolvedSpeech", Time = 4 },
+		{ Name = "MelCombatResolvedSpeech", Time = 300 },
 
 		{ Cue = "/VO/Melinoe_2593", Text = "You'll grow up in no time.", PlayFirst = true},
 		{ Cue = "/VO/Melinoe_0200", Text = "Greater strength." },
@@ -116,14 +128,23 @@ GlobalVoiceLines.GrowBiggerVoiceLines =
 		{ Cue = "/VO/Melinoe_0569", Text = "{#Emph}<Inhale>" },
 		{ Cue = "/VO/Melinoe_2306", Text = "Drink deep and grow tall." },
 		{ Cue = "/VO/Melinoe_3279", Text = "Wow..." },
-		{ Cue = "/VO/Melinoe_3284", Text = "Huh..." },
-		{ Cue = "/VO/Melinoe_0761", Text = "{#Emph}Ungh..." },
 		{ Cue = "/VO/MelinoeField_1895", Text = "That's potent..." },
 		{ Cue = "/VO/MelinoeField_1896", Text = "{#Emph}Ooh..." },
 		{ Cue = "/VO/MelinoeField_2050", Text = "Am I...? Oh." },
 		{ Cue = "/VO/MelinoeField_2051", Text = "I feel a little off..." },
 		{ Cue = "/VO/MelinoeField_1897", Text = "Felt that for sure..." },
-		{ Cue = "/VO/MelinoeField_2052", Text = "What have I done..." },
+		{ Cue = "/VO/Melinoe_1512", Text = "{#Emph}Ah-haha{#Prev}, wow..." },
+		{ Cue = "/VO/Melinoe_1510", Text = "That's a feeling there..." },
+		{ Cue = "/VO/Melinoe_1514", Text = "This feeling, {#Emph}augh..." },
+		{ Cue = "/VO/Melinoe_1495", Text = "No getting used to {#Emph}that..." },
+		{ Cue = "/VO/MelinoeField_0672", Text = "{#Emph}Mm{#Prev}, there we go." },
+		{ Cue = "/VO/MelinoeField_0780", Text = "Something's changed in me..." },
+		{ Cue = "/VO/MelinoeField_0294", Text = "I felt something..." },
+		{ Cue = "/VO/MelinoeField_0295", Text = "A sudden surge..." },
+		{ Cue = "/VO/Melinoe_1771", Text = "Felt that." },
+		{ Cue = "/VO/MelinoeField_0618", Text = "Something's changed..." },
+		{ Cue = "/VO/Melinoe_3593", Text = "You're getting stronger." },
+		{ Cue = "/VO/Melinoe_3593_B", Text = "You're getting stronger." },
 	},
 }
 

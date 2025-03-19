@@ -109,17 +109,17 @@ function GrowHero(args)
 		thread(function()
 			PlaySound({ Name = "/SFX/Enemy Sounds/Wringer/WringerChargeUp" })
 			wait( 0.02 )
+		end)
 		
 			local globalVoiceLines = GlobalVoiceLines.GrowBiggerVoiceLines
-			thread( PlayVoiceLines, globalVoiceLines, false )
-		
-			ShakeScreen({ Speed = 1000, Distance = 2, Duration = 0.3 })
-			thread( DoRumble, { { ScreenPreWait = 0.02, LeftFraction = 0.3, Duration = 0.3 }, } )
-			SetAnimation({ Name = "MelinoeBoonInteractPowerUp", DestinationId = CurrentRun.Hero.ObjectId })
-			CreateAnimation({ Name = "HealthSparkleShower", DestinationId = CurrentRun.Hero.ObjectId })
+		thread( PlayVoiceLines, globalVoiceLines, false )
+	
+		ShakeScreen({ Speed = 1000, Distance = 2, Duration = 0.3 })
+		thread( DoRumble, { { ScreenPreWait = 0.02, LeftFraction = 0.3, Duration = 0.3 }, } )
+		SetAnimation({ Name = "MelinoeBoonInteractPowerUp", DestinationId = CurrentRun.Hero.ObjectId })
+		CreateAnimation({ Name = "HealthSparkleShower", DestinationId = CurrentRun.Hero.ObjectId })
 
-			thread( InCombatTextArgs, { TargetId = CurrentRun.Hero.ObjectId, Text = "GrowPopUp", PreDelay = 0.35, Duration = 1.5, Cooldown = 1.0 } )
-		end)
+		thread( InCombatTextArgs, { TargetId = CurrentRun.Hero.ObjectId, Text = "GrowPopUp", PreDelay = 0.35, Duration = 1.5, Cooldown = 1.0 } )
 	end
 end
 

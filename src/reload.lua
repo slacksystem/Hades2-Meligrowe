@@ -112,7 +112,7 @@ function GrowHero(args)
 		end)
 		
 			local globalVoiceLines = GlobalVoiceLines.GrowBiggerVoiceLines
-		thread( PlayVoiceLines, globalVoiceLines, false )
+		thread( PlayVoiceLines, globalVoiceLines, true )
 	
 		ShakeScreen({ Speed = 1000, Distance = 2, Duration = 0.3 })
 		thread( DoRumble, { { ScreenPreWait = 0.02, LeftFraction = 0.3, Duration = 0.3 }, } )

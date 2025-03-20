@@ -179,7 +179,7 @@ GrowTraits = {
 		GrowTraitGrowthPerRoom = { BaseValue = config.sizeGrowthPerRoom or 0.015, DecimalPlaces = 4 },
 		GrowTraitGrowthPerRoomDisplay = { BaseValue = config.sizeGrowthPerRoom or 0.015, DecimalPlaces = 4 },
 		GrowTraitValue = config.startingSize or 1,
-		VoicePitchPerRoom = { BaseValue = config.voicePitchChangePerRoom or -0.024, DecimalPlaces = 4 },
+		VoicePitchPerRoom = { BaseValue = config.voicePitchChangePerRoom or -0.036, DecimalPlaces = 4 },
 		GrowLevel = 0,
 		ShowInHUD = true,
 		CurrentRoom = 0,

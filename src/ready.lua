@@ -15,8 +15,8 @@ OnAnyLoad {
 }
 
 --Debug
-rom.inputs.on_key_pressed{"None H", function()
-		GrowHero({ sizeAbsolute = true })
+--[[rom.inputs.on_key_pressed{"None H", function()
+		
 	end
 }
 
@@ -33,7 +33,7 @@ rom.inputs.on_key_pressed{"None K", function()
 rom.inputs.on_key_pressed{"None L", function()
 	GrowHero({ changeValue = 2, doPresentation = true })
 end
-}
+}]]
 
 
 --puts the funny boon on you at the start of a run (over in reload.lua)

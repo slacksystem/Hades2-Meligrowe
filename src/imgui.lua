@@ -54,6 +54,13 @@ function drawMenu()
             rom.ImGui.TextWrapped("* Can go bigger, but can cause major problems, change limits below if you're sure.")
             rom.ImGui.PopStyleColor()
 
+            value, used = rom.ImGui.InputFloat("Growth Per Room (Direct Control)", config.sizeGrowthPerRoom, -1, 1)
+            if used then
+                config.sizeGrowthPerRoom = value
+                config.finalSize = 40 * config.sizeGrowthPerRoom + config.startingSize
+            end
+            rom.ImGui.TextWrapped("Adjusts Final Size automatically.")
+
             if config.startingSize > 2.5 or config.finalSize > 2.5 then
                 rom.ImGui.Spacing()
                 rom.ImGui.PushStyleColor(rom.ImGuiCol.Text, 0.75, 0, 0, 1)
@@ -83,6 +90,13 @@ function drawMenu()
             rom.ImGui.PushStyleColor(rom.ImGuiCol.Text, 0.75, 0.75, 0, 1)
             rom.ImGui.TextWrapped("* Voice pitch will sound very silly outside -1.4 - 0.5 range.")
             rom.ImGui.PopStyleColor()
+            
+            value, used = rom.ImGui.InputFloat("Pitch Per Room (Direct Control)", config.voicePitchChangePerRoom, -1, 1)
+            if used then
+                config.voicePitchChangePerRoom = value
+                config.finalPitch = 40 * config.voicePitchChangePerRoom + config.startingPitch
+            end
+            rom.ImGui.TextWrapped("Adjusts Final Size automatically.")
 
             rom.ImGui.Separator()
 
@@ -228,7 +242,129 @@ function drawMenu()
     end --End Limits
     rom.ImGui.Spacing()
 
-    
+    if rom.ImGui.CollapsingHeader("Misc Size Settings") then
+        value, checked = rom.ImGui.Checkbox("Keep Size Changes in Hub (Crossroads)", config.keepSizeInHub)
+        if checked then
+            config.keepSizeInHub = value
+        end
+
+        value, checked = rom.ImGui.Checkbox("Keep Size Changes from Hub into Run.", config.keepHubSizeIntoRun)
+        if checked then
+            config.keepHubSizeIntoRun = value
+        end
+        rom.ImGui.TextWrapped("* Both together allows growth over multiple runs. Careful about getting too big!")
+    end
+    rom.ImGui.Spacing() -- End Misc Size Settings
+
+    if rom.ImGui.CollapsingHeader("Binds and Manual Control") then
+        value, checked = rom.ImGui.Checkbox("Manual Size Control Enabled", config.sizeControl)
+        if checked then
+            if value == false then config.sizeControlInRuns = false end
+
+            config.sizeControl = value
+        end
+        rom.ImGui.TextWrapped("* Hub only without below option.")
+
+        value, checked = rom.ImGui.Checkbox("Manual Size Control Enabled in Runs", config.sizeControlInRuns)
+        if checked then
+            if value == true then config.sizeControl = true end
+
+            config.sizeControlInRuns = value
+        end
+        rom.ImGui.TextWrapped("* Does not disable unstuck toggle if disabled.")
+        rom.ImGui.PushStyleColor(rom.ImGuiCol.Text, 0.75, 0.75, 0, 1)
+        rom.ImGui.TextWrapped("* Will change Max HP if Max HP grow mode enabled! Hub behavior acts like Per Encounter.")
+        rom.ImGui.PopStyleColor()
+
+        rom.ImGui.Separator()
+
+        rom.ImGui.TextWrapped("Binds for manual control below.")
+        rom.ImGui.Text("                               Modifier             Key")
+
+        local foundBindDifference = false
+        local modifierKeys = { "None", "Alt", "Ctrl", "Shift" }
+        for _, bindName in ipairs(BindNames) do
+
+            local label = {
+                unstuck = "Unstuck Toggle",
+                reset = "Reset Size        ",
+                bigger = "Grow                ",
+                muchBigger = "Grow (5x)         ",
+                smaller = "Shrink               ",
+                muchSmaller = "Shrink (5x)        ",
+            }
+
+            --rom.ImGui.PushItemWidth(100)
+            rom.ImGui.Text(label[bindName])
+            --rom.ImGui.PopItemWidth()
+
+            rom.ImGui.SameLine()
+
+            rom.ImGui.PushItemWidth(100)
+            local modName = "###" .. bindName .. "modifier"
+            local modConfigName = bindName .. "Modifier"
+            if rom.ImGui.BeginCombo(modName, config[modConfigName]) then
+                for _, option in ipairs(modifierKeys) do
+                    if rom.ImGui.Selectable(option, (option == config[modConfigName])) then
+                        config[modConfigName] = option
+                        rom.ImGui.SetItemDefaultFocus()
+                    end
+                end
+                rom.ImGui.EndCombo()
+            end
+            rom.ImGui.PopItemWidth()
+
+            rom.ImGui.SameLine()
+
+            local keyName = "###" .. bindName .. "key"
+            local keyConfigName = bindName .. "Key"
+            rom.ImGui.PushItemWidth(130)
+            pressed, value = rom.ImGui.Hotkey(keyName, keycodeMap[config[keyConfigName]])
+            if pressed then
+                local key = keycodeMap[value]
+                config[keyConfigName] = key
+            end
+            rom.ImGui.PopItemWidth()
+
+            local fullBindName = config[modConfigName] .. " " .. config[keyConfigName]
+            local fullBindConfigName = bindName .. "Bind"
+
+            if config[fullBindConfigName] ~= fullBindName then
+                foundBindDifference = true
+            end
+
+        end
+
+        local unsaved = false
+        if foundBindDifference then
+            unsaved = true
+            rom.ImGui.PushStyleColor(rom.ImGuiCol.Button, 0.35, 0, 0, 1)
+        end
+        if unsaved == true then rom.ImGui.PushStyleColor(rom.ImGuiCol.Button, 0.35, 0, 0, 1) end
+        rom.ImGui.BeginDisabled(not unsaved)
+        save = rom.ImGui.Button("Save")
+        rom.ImGui.EndDisabled()
+
+        if save then
+            for _, bindName in ipairs(BindNames) do
+                local modConfigName = bindName .. "Modifier"
+                local keyConfigName = bindName .. "Key"
+                local fullBindName = config[modConfigName] .. " " .. config[keyConfigName]
+                local fullBindConfigName = bindName .. "Bind"
+                config[fullBindConfigName] = fullBindName
+            end
+            setBinds()
+        end
+
+        if unsaved then
+            rom.ImGui.PushStyleColor(rom.ImGuiCol.Text, 0.5, 0, 0, 1)
+            rom.ImGui.Text("Bindings are not saved!")
+        end
+
+        rom.ImGui.PopStyleColor(2)
+
+    end
+    rom.ImGui.Spacing() --End Binds and Manual Control
 
 
 end --drawMenu

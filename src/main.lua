@@ -49,7 +49,9 @@ local function on_reload()
 	-- what to do when we are ready, but also again on every reload.
 	-- only do things that are safe to run over and over.
 	import 'reload.lua'
+	import 'binds.lua'
 	import 'imgui.lua'
+	setBinds()
 end
 
 -- this allows us to limit certain functions to not be reloaded.

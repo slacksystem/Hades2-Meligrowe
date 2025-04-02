@@ -143,7 +143,7 @@ function GrowHero(args)
 		elseif scaleDiff < 0 then
 			--shrink
 			thread(function()
-				PlaySound({ Name = "/SFX/ThanatosHermesKeepsakeFail", Id = CurrentRun.Hero.ObjectId })
+				PlaySound({ Name = "/SFX/ThanatosHermesKeepsakeFail", Id = CurrentRun.Hero.ObjectId, Volume = 0.25 })
 				wait( 0.02 )
 			end)
 

@@ -140,6 +140,8 @@ function GrowHero(args)
 			end)
 
 			thread( InCombatTextArgs, { TargetId = CurrentRun.Hero.ObjectId, Text = "GrowPopUp", PreDelay = 0.35, Duration = 1.5, Cooldown = 1.0 } )
+			SetAnimation({ Name = "MelinoeBoonInteractPowerUp", DestinationId = CurrentRun.Hero.ObjectId })
+			CreateAnimation({ Name = "HealthSparkleShower", DestinationId = CurrentRun.Hero.ObjectId })
 		elseif scaleDiff < 0 then
 			--shrink
 			thread(function()
@@ -148,6 +150,8 @@ function GrowHero(args)
 			end)
 
 			thread( InCombatTextArgs, { TargetId = CurrentRun.Hero.ObjectId, Text = "ShrinkPopUp", PreDelay = 0.35, Duration = 1.5, Cooldown = 1.0 } )
+			SetAnimation({ Name = "MelinoeShrink", DestinationId = CurrentRun.Hero.ObjectId })
+			CreateAnimation({ Name = "HealthSparkleBurst", DestinationId = CurrentRun.Hero.ObjectId })
 		end
 		
 		local globalVoiceLines = GlobalVoiceLines.GrowBiggerVoiceLines --this is actually all size change voice lines don't be fooled
@@ -155,8 +159,6 @@ function GrowHero(args)
 	
 		ShakeScreen({ Speed = 1000, Distance = 2, Duration = 0.3 })
 		thread( DoRumble, { { ScreenPreWait = 0.02, LeftFraction = 0.3, Duration = 0.3 }, } )
-		SetAnimation({ Name = "MelinoeBoonInteractPowerUp", DestinationId = CurrentRun.Hero.ObjectId })
-		CreateAnimation({ Name = "HealthSparkleShower", DestinationId = CurrentRun.Hero.ObjectId })
 	end
 end
 

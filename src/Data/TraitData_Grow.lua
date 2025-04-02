@@ -56,6 +56,46 @@ sjson.hook(textfilePopUp, function(sjsonData)
 	table.insert(sjsonData.Texts, text_to_insert_pop_up2)
 end)
 
+--insert cancelable version of special surface damage animation
+
+local orderAnim = {
+	'Name',
+	'InheritFrom',
+	'GrannyAnimation',
+	'GrannyAnimationSpeed',
+	'CancelOnOwnerMove',
+	'TimeModifierFraction',
+	'ChainTo',
+	'Frames',
+}
+
+local anim_to_insert = {
+	Name = "MelinoeShrink",
+	InheritFrom = "MelinoeBaseAnimation",
+	GrannyAnimation = "Melinoe_NoWeapon_Base_GetHit_C_00",
+	GrannyAnimationSpeed = 0.14,
+	CancelOnOwnerMove = true, --changed!
+	TimeModifierFraction = 1.00,
+	ChainTo = "MelinoeIdleWeaponless",
+	Frames =
+	{
+		{
+			Frame = 0,
+			FrameSpeed = 0.0,
+		},
+		{
+			Frame = 4,
+			FrameSpeed = 1.0,
+		},
+	},
+}
+
+local textfileAnim = rom.path.combine(rom.paths.Content, 'Game/Animations/Model/Hero_Melinoe_Animation_HitReacts.sjson')
+
+sjson.hook(textfileAnim, function(sjsonData)
+---@diagnostic disable-next-line: param-type-mismatch
+	table.insert(sjsonData.Animations, anim_to_insert)
+end)
 
 --custom voice line sets for changing size
 GlobalVoiceLines.GrowBiggerVoiceLines =
@@ -105,7 +145,7 @@ GlobalVoiceLines.GrowBiggerVoiceLines =
 				--Queue = "Interrupt",
 				BreakIfPlayed = true,
 				RandomRemaining = true,
-				PreLineWait = 0.45,
+				PreLineWait = 0.65,
 				SuccessiveChanceToPlay = 0.25,
 				UsePlayerSource = true,
 				--SkipCooldownCheckIfNonePlayed = true,
@@ -133,7 +173,7 @@ GlobalVoiceLines.GrowBiggerVoiceLines =
 				--Queue = "Interrupt",
 				BreakIfPlayed = true,
 				RandomRemaining = true,
-				PreLineWait = 0.45,
+				PreLineWait = 0.65,
 				--SuccessiveChanceToPlay = 0.33,
 				UsePlayerSource = true,
 				--SkipCooldownCheckIfNonePlayed = true,
@@ -195,7 +235,7 @@ GlobalVoiceLines.GrowBiggerVoiceLines =
 				--Queue = "Interrupt",
 				BreakIfPlayed = true,
 				RandomRemaining = true,
-				PreLineWait = 0.45,
+				PreLineWait = 0.65,
 				SuccessiveChanceToPlay = 0.25,
 				UsePlayerSource = true,
 				--SkipCooldownCheckIfNonePlayed = true,
@@ -218,7 +258,7 @@ GlobalVoiceLines.GrowBiggerVoiceLines =
 				--Queue = "Interrupt",
 				BreakIfPlayed = true,
 				RandomRemaining = true,
-				PreLineWait = 0.45,
+				PreLineWait = 0.65,
 				--SuccessiveChanceToPlay = 0.33,
 				UsePlayerSource = true,
 				--SkipCooldownCheckIfNonePlayed = true,

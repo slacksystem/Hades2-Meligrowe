@@ -92,3 +92,18 @@ modutil.mod.Path.Wrap("CirceShrink", function(base, unit, args, roomArgs)
 	base(unit, args, roomArgs)
 	GrowTraitUpdate()
 end)
+
+modutil.mod.Path.Wrap("AddMaxHealth", function(base, healthGained, source, args)
+	base(healthGained, source, args)
+	if config.growthMode == "Max HP" and HeroHasTrait("HealthGrowTrait") then
+		if args and args.Thread == true then
+			if args.Delay == true then
+				thread(GrowHero, { doPresentation = true, delay = args.Delay })
+			else
+				thread(GrowHero, { doPresentation = true })
+			end
+		else
+			GrowHero({ doPresentation = true })
+		end
+	end
+end)

@@ -15,6 +15,13 @@ local text_to_insert = sjson.to_object({
 	Description = "{#UpgradeFormat}{$TooltipData.ExtractData.CurrentMelSize:P} {#Prev}size. Every {#BoldFormat}{$TooltipData.ExtractData.TooltipRoomInterval} {$Keywords.EncounterPlural}{#Prev}, gains {#BoldFormatGraft}+{$TooltipData.ExtractData.MelSizeIncreasePerXRooms:F} {#Prev}more size.",
 }, order)
 
+--[[local text_to_insert2 = sjson.to_object({
+	Id = "HealthGrowTrait",
+	InheritFrom = "BaseBoon",
+	DisplayName = "Healthy Heft",
+	Description = "{#UpgradeFormat}{$TooltipData.ExtractData.CurrentMelSize:P} {#Prev}size. Every {#BoldFormat}{$TooltipData.ExtractData.TooltipRoomInterval} {$Keywords.EncounterPlural}{#Prev}, gains {#BoldFormatGraft}+{$TooltipData.ExtractData.MelSizeIncreasePerXRooms:F} {#Prev}more size.",
+}, order)]]
+
 local textfile = rom.path.combine(rom.paths.Content, 'Game/Text/en/TraitText.en.sjson')
 
 sjson.hook(textfile, function(sjsonData)
@@ -155,32 +162,17 @@ GlobalVoiceLines.GrowBiggerVoiceLines =
 GrowTraits = {
 	GrowTrait = 
 	{
-		--InheritFrom = {"BaseCurse"},
 		Icon = "Boon_Circe_02",
 		BaseChipmunkValue = config.startingPitch,
-		SetupFunction = 
-		{
-			Name = "aaaaaaa", --I don't think this actually does anything but im leaving it
-			Args = 
-			{
-				--ScaleMultiplier = 1.25,
-				--InitialPresentationFunctionName = "CirceEnlargePresentation",
-				ReportValues = 
-				{
-					ReportedScale = "Scale",
-				},
-			},
-		},
-		--[[AddOutgoingDamageModifiers = 
-		{
-			ValidWeaponMultiplier = 1.15,
-			ReportValues = {ReportedMultiplier = "ValidWeaponMultiplier"}
-		},]]
-		GrowTraitGrowthPerRoom = { BaseValue = config.sizeGrowthPerRoom or 0.015, DecimalPlaces = 4 },
-		GrowTraitGrowthPerRoomDisplay = { BaseValue = config.sizeGrowthPerRoom or 0.015, DecimalPlaces = 4 },
+		GrowMode = config.growthMode or "Per Encounter",
 		GrowTraitValue = config.startingSize or 1,
+		PreservedGrowth = config.startingSize or 1,
+		--Per Encounter/Hub Scaling Data
+		GrowTraitGrowthPerRoom = { BaseValue = config.sizeGrowthPerRoom or 0.0225, DecimalPlaces = 4 },
+		GrowTraitGrowthPerRoomDisplay = { BaseValue = config.sizeGrowthPerRoom or 0.0225, DecimalPlaces = 4 },
 		VoicePitchPerRoom = { BaseValue = config.voicePitchChangePerRoom or -0.036, DecimalPlaces = 4 },
 		GrowLevel = 0,
+		--important UI/per room interaction stuff
 		ShowInHUD = true,
 		CurrentRoom = 0,
 		RoomsPerUpgrade = 
@@ -191,6 +183,39 @@ GrowTraits = {
 				ReportedRoomsPerUpgrade = "Amount",
 			},
 		},
+		ExtractValues = 
+		{
+			{
+				Key = "GrowTraitGrowthPerRoomDisplay",
+				ExtractAs = "MelSizeIncreasePerXRooms",
+				Format = "Percent",
+				DecimalPlaces = 4,
+			},
+			{
+				SkipAutoExtract = true,
+				Key = "GrowTraitValue",
+				ExtractAs = "CurrentMelSize",
+				Format = "PercentDelta",
+				DecimalPlaces = 4,
+			},
+			{
+				Key = "ReportedRoomsPerUpgrade",
+				ExtractAs = "TooltipRoomInterval",
+			},
+		},
+	},
+	HealthGrowTrait = 
+	{
+		Icon = "Boon_Circe_02",
+		BaseChipmunkValue = config.startingPitch,
+		GrowMode = config.growthMode or "Per Encounter",
+		GrowTraitValue = config.startingSize or 1,
+		--Max HP Scaling Data
+		HealthBaseSizeAt = config.healthModeNormalSizeHP or 110,
+		HealthBigSize = config.healthModeBigSize or 1.9,
+		HealthBigPitch = healthModeBigPitch or -1.4,
+		--important UI/per room interaction stuff
+		--ShowInHUD = true,
 		ExtractValues = 
 		{
 			{

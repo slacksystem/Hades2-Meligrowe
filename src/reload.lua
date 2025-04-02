@@ -10,46 +10,62 @@
 function GrowTraitUpdate(args)
 	local unit = nil
 	local trait = nil
+	local mode = "room"
 
 	if CurrentRun.Hero ~= nil then
 		unit = CurrentRun.Hero
 		if HeroHasTrait("GrowTrait") then
 			trait = GetHeroTrait("GrowTrait")
+		elseif HeroHasTrait("HealthGrowTrait") then
+			trait = GetHeroTrait("HealthGrowTrait")
+			mode = "hp"
 		end
 	end
 
 	if unit == nil or trait == nil then return false end
 
-	trait.GrowTraitValue = (config.startingSize or 1) + trait.GrowLevel * trait.GrowTraitGrowthPerRoom
-	trait.BaseChipmunkValue = (config.startingPitch or 0) + trait.GrowLevel * trait.VoicePitchPerRoom
-	--[[roomArgs = roomArgs or {}
-	local duration = args.Duration
-	local skipPresentation = false
-	if roomArgs.Grouped then
-		duration = 0
-	else
-		thread( CirceEnlargePresentation )
-	end]]
+	if mode == "hp" then
+		local currentHP = CurrentRun.Hero.MaxHealth or 110
+		local startHP = trait.HealthBaseSizeAt or config.healthModeNormalSizeHP or 110
+		local finalSize = trait.HealthBigSize or config.healthModeBigSize or 1.9
+		local finalPitch = trait.HealthBigPitch or config.healthModeBigPitch or -1.4
 
-	trait.GrowTraitGrowthPerRoomDisplay = trait.GrowTraitGrowthPerRoom * (config.growEveryXRooms or 2)
+		if config.healthModeUseStartingHP then startHP = CurrentRun.Hero.trackedHP or startHP end
+
+		--lerp size and pitch from set starting HP value to size/pitch at 400 and beyond
+		trait.GrowTraitValue = ( 1 * (400 - currentHP) + finalSize * (currentHP - startHP) ) / ( 400 - startHP )
+		trait.BaseChipmunkValue = ( finalPitch * (currentHP - startHP) ) / ( 400 - startHP ) --startPitch is zero, therefore startPitch * (400 - currentHP) == 0
+	else
+		trait.GrowTraitValue = (config.startingSize or 1) + trait.GrowLevel * trait.GrowTraitGrowthPerRoom
+		trait.BaseChipmunkValue = (config.startingPitch or 0) + trait.GrowLevel * trait.VoicePitchPerRoom
+	end
+
+
+	if mode ~= "hp" then
+		trait.GrowTraitGrowthPerRoomDisplay = trait.GrowTraitGrowthPerRoom * (config.growEveryXRooms or 2)
+	end
 
 	if HeroHasTrait("CirceEnlargeTrait") then
 		trait.GrowTraitValue = trait.GrowTraitValue * 1.25
-		trait.GrowTraitGrowthPerRoomDisplay = trait.GrowTraitGrowthPerRoom * 1.25
+		if mode ~= "hp" then
+			trait.GrowTraitGrowthPerRoomDisplay = trait.GrowTraitGrowthPerRoom * 1.25
+		end
 		trait.BaseChipmunkValue = trait.BaseChipmunkValue - 0.2
 	end
 
 	if HeroHasTrait("CirceShrinkTrait") then
 		trait.GrowTraitValue = trait.GrowTraitValue * 0.75
-		trait.GrowTraitGrowthPerRoomDisplay = trait.GrowTraitGrowthPerRoom * 0.75
+		if mode ~= "hp" then
+			trait.GrowTraitGrowthPerRoomDisplay = trait.GrowTraitGrowthPerRoom * 0.75
+		end
 		trait.BaseChipmunkValue = trait.BaseChipmunkValue + 0.3
 	end
 
-	if config.voicePitchLowerLimit ~= nil then
+	if config.voicePitchUseLowerLimit and config.voicePitchLowerLimit ~= nil then
 		trait.BaseChipmunkValue = math.max(trait.BaseChipmunkValue, config.voicePitchLowerLimit)
 	end
 
-	if config.voicePitchUpperLimit ~= nil then
+	if config.voicePitchUseUpperLimit and config.voicePitchUpperLimit ~= nil then
 		trait.BaseChipmunkValue = math.min(trait.BaseChipmunkValue, config.voicePitchUpperLimit)
 	end
 
@@ -86,23 +102,29 @@ function GrowHero(args)
 	local changeValue = 1
 	local changeValueAbs = 0
 	local sizeAbsolute = false
-	local doPresentation = false
+	local delay = 0
 	if args then
 		changeValue = args.changeValue or 1
 		changeValueAbs = args.changeValue or 0
 		sizeAbsolute = args.sizeAbsolute or false
-		doPresentation = doPresentation or false
+		delay = args.delay or 0
 	end
-	if CurrentRun.Hero ~= nil and HeroHasTrait("GrowTrait") then
-		local trait = GetHeroTrait("GrowTrait")
-		if trait.GrowLevel ~= nil then
-			if not sizeAbsolute then
-				trait.GrowLevel = trait.GrowLevel + changeValue
-			else
-				trait.GrowLevel = changeValueAbs
+	wait(delay)
+	if CurrentRun.Hero ~= nil then
+		if HeroHasTrait("GrowTrait") then
+			local trait = GetHeroTrait("GrowTrait")
+			if trait.GrowLevel ~= nil then
+				if not sizeAbsolute then
+					trait.GrowLevel = trait.GrowLevel + changeValue
+				else
+					trait.GrowLevel = changeValueAbs
+				end
 			end
+			GrowTraitUpdate()
+		elseif HeroHasTrait("HealthGrowTrait") then
+			--Just update size and play animation below. No logic needed to change size here.
+			GrowTraitUpdate()
 		end
-		GrowTraitUpdate()
 	end
 
 	if args and args.doPresentation == true then
@@ -111,7 +133,7 @@ function GrowHero(args)
 			wait( 0.02 )
 		end)
 		
-			local globalVoiceLines = GlobalVoiceLines.GrowBiggerVoiceLines
+		local globalVoiceLines = GlobalVoiceLines.GrowBiggerVoiceLines
 		thread( PlayVoiceLines, globalVoiceLines, true )
 	
 		ShakeScreen({ Speed = 1000, Distance = 2, Duration = 0.3 })
@@ -125,10 +147,14 @@ end
 
 function AddGrowTraitToHero(skipUI)
 	CurrentRun.Hero.trackedScale = 1.0 --this exists to allow dialogue to interact
+	CurrentRun.Hero.trackedHP = CurrentRun.Hero.MaxHealth --remember HP from run start for certain maxHP mode settings
+	local traitName = "GrowTrait"
+	if config.growthMode == "Max HP" then traitName = "HealthGrowTrait" end
+	
 	AddTraitToHero({
 		TraitData = GetProcessedTraitData({
 			Unit = CurrentRun.Hero,
-			TraitName = "GrowTrait",
+			TraitName = traitName,
 			Rarity = "Common",
 		}),
 		SkipNewTraitHighlight = true,

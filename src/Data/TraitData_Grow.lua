@@ -12,21 +12,23 @@ local text_to_insert = sjson.to_object({
 	Id = "GrowTrait",
 	InheritFrom = "BaseBoon",
 	DisplayName = "Increasing Heft",
-	Description = "{#UpgradeFormat}{$TooltipData.ExtractData.CurrentMelSize:P} {#Prev}size. Every {#BoldFormat}{$TooltipData.ExtractData.TooltipRoomInterval} {$Keywords.EncounterPlural}{#Prev}, gains {#BoldFormatGraft}+{$TooltipData.ExtractData.MelSizeIncreasePerXRooms:F} {#Prev}more size.",
+	Description = "{#UpgradeFormat}{$TooltipData.ExtractData.CurrentMelSize:P} {#Prev}size. Every {#BoldFormat}{$TooltipData.ExtractData.TooltipRoomInterval} {$Keywords.EncounterPlural}{#Prev}, gains {#BoldFormatGraft}+{$TooltipData.ExtractData.MelSizeIncreasePerXRooms:F} {#Prev}size.",
 }, order)
 
---[[local text_to_insert2 = sjson.to_object({
+local text_to_insert2 = sjson.to_object({
 	Id = "HealthGrowTrait",
 	InheritFrom = "BaseBoon",
 	DisplayName = "Healthy Heft",
-	Description = "{#UpgradeFormat}{$TooltipData.ExtractData.CurrentMelSize:P} {#Prev}size. Every {#BoldFormat}{$TooltipData.ExtractData.TooltipRoomInterval} {$Keywords.EncounterPlural}{#Prev}, gains {#BoldFormatGraft}+{$TooltipData.ExtractData.MelSizeIncreasePerXRooms:F} {#Prev}more size.",
-}, order)]]
+	Description = "{#UpgradeFormat}{$TooltipData.ExtractData.CurrentMelSize:P} {#Prev}size. Changes with {!Icons.HealthUp}.",
+}, order)
 
 local textfile = rom.path.combine(rom.paths.Content, 'Game/Text/en/TraitText.en.sjson')
 
 sjson.hook(textfile, function(sjsonData)
 ---@diagnostic disable-next-line: param-type-mismatch
 	table.insert(sjsonData.Texts, text_to_insert)
+	---@diagnostic disable-next-line: param-type-mismatch
+	table.insert(sjsonData.Texts, text_to_insert2)
 end)
 
 --insert pop-up text for growth
@@ -40,15 +42,22 @@ local text_to_insert_pop_up = sjson.to_object({
 	DisplayName = "Bigger...",
 }, orderPopUp)
 
+local text_to_insert_pop_up2 = sjson.to_object({
+	Id = "ShrinkPopUp",
+	DisplayName = "Smaller...",
+}, orderPopUp)
+
 local textfilePopUp = rom.path.combine(rom.paths.Content, 'Game/Text/en/HelpText.en.sjson')
 
 sjson.hook(textfilePopUp, function(sjsonData)
 ---@diagnostic disable-next-line: param-type-mismatch
 	table.insert(sjsonData.Texts, text_to_insert_pop_up)
+---@diagnostic disable-next-line: param-type-mismatch
+	table.insert(sjsonData.Texts, text_to_insert_pop_up2)
 end)
 
 
---custom voice line sets for getting bigger
+--custom voice line sets for changing size
 GlobalVoiceLines.GrowBiggerVoiceLines =
 {
 	{
@@ -217,21 +226,11 @@ GrowTraits = {
 		ExtractValues = 
 		{
 			{
-				Key = "GrowTraitGrowthPerRoomDisplay",
-				ExtractAs = "MelSizeIncreasePerXRooms",
-				Format = "Percent",
-				DecimalPlaces = 4,
-			},
-			{
 				SkipAutoExtract = true,
 				Key = "GrowTraitValue",
 				ExtractAs = "CurrentMelSize",
 				Format = "PercentDelta",
 				DecimalPlaces = 4,
-			},
-			{
-				Key = "ReportedRoomsPerUpgrade",
-				ExtractAs = "TooltipRoomInterval",
 			},
 		},
 	},

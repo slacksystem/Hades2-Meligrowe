@@ -102,12 +102,14 @@ function GrowHero(args)
 	local changeValue = 1
 	local changeValueAbs = 0
 	local sizeAbsolute = false
+	local lastScale = nil
 	if args then
 		changeValue = args.changeValue or 1
 		changeValueAbs = args.changeValue or 0
 		sizeAbsolute = args.sizeAbsolute or false
 	end
 	if CurrentRun.Hero ~= nil then
+		lastScale = CurrentRun.Hero.trackedScale --checks for size changes to affect presentation (grow vs. shrink)
 		if HeroHasTrait("GrowTrait") then
 			local trait = GetHeroTrait("GrowTrait")
 			if trait.GrowLevel ~= nil then
@@ -126,29 +128,56 @@ function GrowHero(args)
 		return
 	end
 
+	local scaleDiff = CurrentRun.Hero.trackedScale - lastScale
+	CurrentRun.Hero.trackedScaleDiff = scaleDiff
+
 	if args and args.doPresentation == true then
-		thread(function()
-			PlaySound({ Name = "/SFX/Enemy Sounds/Wringer/WringerChargeUp" })
-			wait( 0.02 )
-		end)
+		if scaleDiff > 0 then
+			--grow
+			thread(function()
+				PlaySound({ Name = "/SFX/Enemy Sounds/Wringer/WringerChargeUp", Id = CurrentRun.Hero.ObjectId })
+				wait( 0.02 )
+			end)
+
+			thread( InCombatTextArgs, { TargetId = CurrentRun.Hero.ObjectId, Text = "GrowPopUp", PreDelay = 0.35, Duration = 1.5, Cooldown = 1.0 } )
+		elseif scaleDiff < 0 then
+			--shrink
+			thread(function()
+				PlaySound({ Name = "/SFX/ThanatosHermesKeepsakeFail", Id = CurrentRun.Hero.ObjectId })
+				wait( 0.02 )
+			end)
+
+			thread( InCombatTextArgs, { TargetId = CurrentRun.Hero.ObjectId, Text = "ShrinkPopUp", PreDelay = 0.35, Duration = 1.5, Cooldown = 1.0 } )
+		end
 		
-		local globalVoiceLines = GlobalVoiceLines.GrowBiggerVoiceLines
+		local globalVoiceLines = GlobalVoiceLines.GrowBiggerVoiceLines --this is actually all size change voice lines don't be fooled
 		thread( PlayVoiceLines, globalVoiceLines, true )
 	
 		ShakeScreen({ Speed = 1000, Distance = 2, Duration = 0.3 })
 		thread( DoRumble, { { ScreenPreWait = 0.02, LeftFraction = 0.3, Duration = 0.3 }, } )
 		SetAnimation({ Name = "MelinoeBoonInteractPowerUp", DestinationId = CurrentRun.Hero.ObjectId })
 		CreateAnimation({ Name = "HealthSparkleShower", DestinationId = CurrentRun.Hero.ObjectId })
-
-		thread( InCombatTextArgs, { TargetId = CurrentRun.Hero.ObjectId, Text = "GrowPopUp", PreDelay = 0.35, Duration = 1.5, Cooldown = 1.0 } )
 	end
 end
 
 function AddGrowTraitToHero(skipUI)
-	CurrentRun.Hero.trackedScale = 1.0 --this exists to allow dialogue to interact
+	CurrentRun.Hero.trackedScale = config.startingSize or 1.0 --this exists to allow dialogue to interact and presentation to detect grow vs. shrink
+	CurrentRun.Hero.trackedScaleDiff = 0 --supplemental to the above
 	CurrentRun.Hero.trackedHP = CurrentRun.Hero.MaxHealth --remember HP from run start for certain maxHP mode settings
 	local traitName = "GrowTrait"
-	if config.growthMode == "Max HP" then traitName = "HealthGrowTrait" end
+	if config.growthMode == "Max HP" then
+		traitName = "HealthGrowTrait"
+		if config.healthModeUseStartingHP then
+			CurrentRun.Hero.trackedScale = 1.0
+		else
+			local currentHP = CurrentRun.Hero.trackedHP
+			local startHP = config.healthModeNormalSizeHP or 110
+			local finalSize = config.healthModeBigSize or 1.9
+
+			--lerp size to make sure start size is recorded correctly
+			CurrentRun.Hero.trackedScale = ( 1 * (400 - currentHP) + finalSize * (currentHP - startHP) ) / ( 400 - startHP )
+		end
+	end
 	
 	AddTraitToHero({
 		TraitData = GetProcessedTraitData({

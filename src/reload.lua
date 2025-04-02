@@ -102,14 +102,11 @@ function GrowHero(args)
 	local changeValue = 1
 	local changeValueAbs = 0
 	local sizeAbsolute = false
-	local delay = 0
 	if args then
 		changeValue = args.changeValue or 1
 		changeValueAbs = args.changeValue or 0
 		sizeAbsolute = args.sizeAbsolute or false
-		delay = args.delay or 0
 	end
-	wait(delay)
 	if CurrentRun.Hero ~= nil then
 		if HeroHasTrait("GrowTrait") then
 			local trait = GetHeroTrait("GrowTrait")

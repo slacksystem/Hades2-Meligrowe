@@ -212,6 +212,7 @@ function setBinds()
                 Name = "Get Bigger",
                 function()
                     if config.sizeControl == true then
+                        if config.growthMode == "Max HP" then AddMaxHealth(10, nil, {Silent = true}) end
                         GrowHero({ changeValue = 2, doPresentation = true })
                     end
                 end
@@ -222,6 +223,7 @@ function setBinds()
                 Name = "Get Bigger (5x)",
                 function()
                     if config.sizeControl == true then
+                        if config.growthMode == "Max HP" then AddMaxHealth(50, nil, {Silent = true}) end
                         GrowHero({ changeValue = 10, doPresentation = true })
                     end
                 end
@@ -232,6 +234,7 @@ function setBinds()
                 Name = "Get Smaller",
                 function()
                     if config.sizeControl == true then
+                        if config.growthMode == "Max HP" then AddMaxHealth(-10, nil, {Silent = true}) end
                         GrowHero({ changeValue = -2, doPresentation = true })
                     end
                 end
@@ -242,6 +245,7 @@ function setBinds()
                 Name = "Get Smaller (5x)",
                 function()
                     if config.sizeControl == true then
+                        if config.growthMode == "Max HP" then AddMaxHealth(-50, nil, {Silent = true}) end
                         GrowHero({ changeValue = -10, doPresentation = true })
                     end
                 end

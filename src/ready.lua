@@ -93,7 +93,23 @@ modutil.mod.Path.Wrap("CirceShrink", function(base, unit, args, roomArgs)
 	GrowTraitUpdate()
 end)
 
-modutil.mod.Path.Wrap("AddMaxHealth", function(base, healthGained, source, args)
+modutil.mod.Path.Wrap("ValidateMaxHealth", function(base, blockDelta)
+	base(blockDelta)
+
+	local hasChanged = false
+	if not CurrentRun.Hero.trackedLastMaxHP then
+		CurrentRun.Hero.trackedLastMaxHP = CurrentRun.Hero.MaxHealth
+	elseif CurrentRun.Hero.trackedLastMaxHP ~= CurrentRun.Hero.MaxHealth then
+		hasChanged = true
+		CurrentRun.Hero.trackedLastMaxHP = CurrentRun.Hero.MaxHealth
+	end
+
+	if config.growthMode == "Max HP" and HeroHasTrait("HealthGrowTrait") and hasChanged then
+		GrowHero({ doPresentation = true })
+	end
+end)
+
+--[[modutil.mod.Path.Wrap("AddMaxHealth", function(base, healthGained, source, args)
 	base(healthGained, source, args)
 	if config.growthMode == "Max HP" and HeroHasTrait("HealthGrowTrait") then
 		if args and args.Thread == true then
@@ -106,4 +122,4 @@ modutil.mod.Path.Wrap("AddMaxHealth", function(base, healthGained, source, args)
 			GrowHero({ doPresentation = true })
 		end
 	end
-end)
+end)]]

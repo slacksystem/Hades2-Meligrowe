@@ -122,6 +122,8 @@ function GrowHero(args)
 			--Just update size and play animation below. No logic needed to change size here.
 			GrowTraitUpdate()
 		end
+	else
+		return
 	end
 
 	if args and args.doPresentation == true then

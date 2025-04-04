@@ -22,6 +22,13 @@ local text_to_insert2 = sjson.to_object({
 	Description = "{#UpgradeFormat}{$TooltipData.ExtractData.CurrentMelSize:P} {#Prev}size. Changes with {!Icons.HealthUp}.",
 }, order)
 
+local text_to_insert3 = sjson.to_object({
+	Id = "HubGrowTrait",
+	InheritFrom = "BaseBoon",
+	DisplayName = "Remote Control Heft",
+	Description = "{#UpgradeFormat}{$TooltipData.ExtractData.CurrentMelSize:P} {#Prev}size. Press insert to set size control and other settings!",
+}, order)
+
 local textfile = rom.path.combine(rom.paths.Content, 'Game/Text/en/TraitText.en.sjson')
 
 sjson.hook(textfile, function(sjsonData)
@@ -29,6 +36,8 @@ sjson.hook(textfile, function(sjsonData)
 	table.insert(sjsonData.Texts, text_to_insert)
 	---@diagnostic disable-next-line: param-type-mismatch
 	table.insert(sjsonData.Texts, text_to_insert2)
+	---@diagnostic disable-next-line: param-type-mismatch
+	table.insert(sjsonData.Texts, text_to_insert3)
 end)
 
 --insert pop-up text for growth
@@ -47,6 +56,16 @@ local text_to_insert_pop_up2 = sjson.to_object({
 	DisplayName = "Smaller...",
 }, orderPopUp)
 
+local text_to_insert_pop_up3 = sjson.to_object({
+	Id = "unstuckEnablePopUp",
+	DisplayName = "Size Locked! (Alt J default)",
+}, orderPopUp)
+
+local text_to_insert_pop_up4 = sjson.to_object({
+	Id = "unstuckDisablePopUp",
+	DisplayName = "Size Unlocked! (Alt J default)",
+}, orderPopUp)
+
 local textfilePopUp = rom.path.combine(rom.paths.Content, 'Game/Text/en/HelpText.en.sjson')
 
 sjson.hook(textfilePopUp, function(sjsonData)
@@ -54,6 +73,10 @@ sjson.hook(textfilePopUp, function(sjsonData)
 	table.insert(sjsonData.Texts, text_to_insert_pop_up)
 ---@diagnostic disable-next-line: param-type-mismatch
 	table.insert(sjsonData.Texts, text_to_insert_pop_up2)
+	---@diagnostic disable-next-line: param-type-mismatch
+	table.insert(sjsonData.Texts, text_to_insert_pop_up3)
+	---@diagnostic disable-next-line: param-type-mismatch
+	table.insert(sjsonData.Texts, text_to_insert_pop_up4)
 end)
 
 --insert cancelable version of special surface damage animation
@@ -302,13 +325,9 @@ GrowTraits = {
 	{
 		Icon = "Boon_Circe_02",
 		BaseChipmunkValue = config.startingPitch,
-		GrowMode = config.growthMode or "Per Encounter",
 		GrowTraitValue = config.startingSize or 1,
-		PreservedGrowth = config.startingSize or 1,
-		--Per Encounter/Hub Scaling Data
-		GrowTraitGrowthPerRoom = { BaseValue = config.sizeGrowthPerRoom or 0.0225, DecimalPlaces = 4 },
-		GrowTraitGrowthPerRoomDisplay = { BaseValue = config.sizeGrowthPerRoom or 0.0225, DecimalPlaces = 4 },
-		VoicePitchPerRoom = { BaseValue = config.voicePitchChangePerRoom or -0.036, DecimalPlaces = 4 },
+		--Per Encounter Data
+		GrowTraitGrowthPerRoomDisplay = { BaseValue = (config.sizeGrowthPerRoom or 0.0225) * (config.growEveryXRooms or 2), DecimalPlaces = 4 },
 		GrowLevel = 0,
 		--important UI/per room interaction stuff
 		ShowInHUD = true,
@@ -346,14 +365,28 @@ GrowTraits = {
 	{
 		Icon = "Boon_Circe_02",
 		BaseChipmunkValue = config.startingPitch,
-		GrowMode = config.growthMode or "Per Encounter",
 		GrowTraitValue = config.startingSize or 1,
-		--Max HP Scaling Data
-		HealthBaseSizeAt = config.healthModeNormalSizeHP or 110,
-		HealthBigSize = config.healthModeBigSize or 1.9,
-		HealthBigPitch = healthModeBigPitch or -1.4,
-		--important UI/per room interaction stuff
-		--ShowInHUD = true,
+		--important UI stuff
+		showInHUD = true,
+		ExtractValues = 
+		{
+			{
+				SkipAutoExtract = true,
+				Key = "GrowTraitValue",
+				ExtractAs = "CurrentMelSize",
+				Format = "PercentDelta",
+				DecimalPlaces = 4,
+			},
+		},
+	},
+	HubGrowTrait = 
+	{
+		Icon = "Boon_Circe_02",
+		BaseChipmunkValue = 0,
+		GrowTraitValue = 1,
+		GrowLevel = 0,
+		--important UI stuff
+		showInHUD = true,
 		ExtractValues = 
 		{
 			{

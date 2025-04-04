@@ -23,6 +23,7 @@ function drawMenu()
                 if rom.ImGui.Selectable(option, (option == config.growthMode)) then
                     config.growthMode = option
                     rom.ImGui.SetItemDefaultFocus()
+                    AddGrowTraitToHero()
                 end
             end
             rom.ImGui.EndCombo()
@@ -40,6 +41,7 @@ function drawMenu()
             if used then
                 config.startingSize = value
                 config.sizeGrowthPerRoom = (config.finalSize - config.startingSize) / 40
+                GrowTraitUpdate()
             end
 
             rom.ImGui.TextWrapped("Approximate Final Size")
@@ -48,6 +50,7 @@ function drawMenu()
             if used then
                 config.finalSize = value
                 config.sizeGrowthPerRoom = (config.finalSize - config.startingSize) / 40
+                GrowTraitUpdate()
             end
             rom.ImGui.TextWrapped("* Will grow/shrink 25-35% more in Olympus runs.")
             rom.ImGui.PushStyleColor(rom.ImGuiCol.Text, 0.75, 0.75, 0, 1)
@@ -58,6 +61,7 @@ function drawMenu()
             if used then
                 config.sizeGrowthPerRoom = value
                 config.finalSize = 40 * config.sizeGrowthPerRoom + config.startingSize
+                GrowTraitUpdate()
             end
             rom.ImGui.TextWrapped("Adjusts Final Size automatically.")
 
@@ -78,6 +82,7 @@ function drawMenu()
             if used then
                 config.startingPitch = value
                 config.voicePitchChangePerRoom = (config.finalPitch - config.startingPitch) / 40
+                GrowTraitUpdate()
             end
 
             rom.ImGui.TextWrapped("Approximate Final Voice Pitch")
@@ -85,6 +90,7 @@ function drawMenu()
             if used then
                 config.finalPitch = value
                 config.voicePitchChangePerRoom = (config.finalPitch - config.startingPitch) / 40
+                GrowTraitUpdate()
             end
             rom.ImGui.TextWrapped("* Will change 25-35% more in Olympus runs.")
             rom.ImGui.PushStyleColor(rom.ImGuiCol.Text, 0.75, 0.75, 0, 1)
@@ -95,6 +101,7 @@ function drawMenu()
             if used then
                 config.voicePitchChangePerRoom = value
                 config.finalPitch = 40 * config.voicePitchChangePerRoom + config.startingPitch
+                GrowTraitUpdate()
             end
             rom.ImGui.TextWrapped("Adjusts Final Size automatically.")
 
@@ -104,6 +111,14 @@ function drawMenu()
             value, used = rom.ImGui.SliderInt("Rooms##roomCount", config.growEveryXRooms, 1, 10)
             if used then
                 config.growEveryXRooms = value
+                if HeroHasTrait("GrowTrait") and CurrentRun ~= nil and CurrentRun.EncounterDepth then
+                    local trait = GetHeroTrait("GrowTrait")
+                    local divisor = value
+                    trait.GrowLevel = math.floor(CurrentRun.EncounterDepth / divisor) * divisor --round down to closest multiple of X rooms
+                    trait.CurrentRoom = trait.RoomsPerUpgrade.Amount - (CurrentRun.EncounterDepth % divisor)
+                    TraitUIUpdateText( trait )
+                end
+                GrowTraitUpdate()
             end
             rom.ImGui.TextWrapped("* Does not change speed of growth. More rooms = bigger bursts of growth.")
 
@@ -124,6 +139,7 @@ function drawMenu()
                 value, used = rom.ImGui.SliderInt("HP##startSizeHP", config.healthModeNormalSizeHP, 30, 110)
                 if used then
                     config.healthModeNormalSizeHP = value
+                    GrowTraitUpdate()
                 end
             end
 
@@ -131,6 +147,7 @@ function drawMenu()
             value, used = rom.ImGui.SliderFloat("Times Normal Size##endSizeHP", config.healthModeBigSize, 0.1, sliderCap, "%.1f")
             if used then
                 config.healthModeBigSize = value
+                GrowTraitUpdate()
             end
             rom.ImGui.PushStyleColor(rom.ImGuiCol.Text, 0.75, 0.75, 0, 1)
             rom.ImGui.TextWrapped("* Can go bigger, but can cause major problems, change limits below if you're sure.")
@@ -153,6 +170,7 @@ function drawMenu()
             value, used = rom.ImGui.SliderFloat("Pitch Difference##endPitchHP", config.healthModeBigPitch, -2.0, 2.0, "%.1f")
             if used then
                 config.healthModeBigPitch = value
+                GrowTraitUpdate()
             end
             rom.ImGui.TextWrapped("* Will change 25-35% more in Olympus runs.")
             rom.ImGui.PushStyleColor(rom.ImGuiCol.Text, 0.75, 0.75, 0, 1)
@@ -175,6 +193,7 @@ function drawMenu()
             value, used = rom.ImGui.SliderFloat("Times Normal Size##lowerSizeCap", config.sizeLowerLimit, 0.1, 1.0, "%.1f")
             if used then
                 config.sizeLowerLimit = value
+                GrowTraitUpdate()
             end
         end
 
@@ -191,6 +210,7 @@ function drawMenu()
             value, used = rom.ImGui.SliderFloat("Times Normal Size##upperSizeCap", config.sizeUpperLimit, 1.0, sliderCap, "%.1f")
             if used then
                 config.sizeUpperLimit = value
+                GrowTraitUpdate()
             end
         end
 
@@ -206,6 +226,7 @@ function drawMenu()
             value, used = rom.ImGui.SliderFloat("Pitch Difference##lowerPitchCap", config.voicePitchLowerLimit, -2.0, 0, "%.1f")
             if used then
                 config.voicePitchLowerLimit = value
+                GrowTraitUpdate()
             end
         end
 
@@ -219,10 +240,9 @@ function drawMenu()
             value, used = rom.ImGui.SliderFloat("Pitch Difference##upperPitchCap", config.voicePitchUpperLimit, 0, 2.0, "%.1f")
             if used then
                 config.voicePitchUpperLimit = value
+                GrowTraitUpdate()
             end
         end
-
-        rom.ImGui.Separator()
         
         value, checked = rom.ImGui.Checkbox("Allow Extreme Size Settings", config.dangerousSizesAllowed)
         if checked then
@@ -253,6 +273,10 @@ function drawMenu()
             config.keepHubSizeIntoRun = value
         end
         rom.ImGui.TextWrapped("* Both together allows growth over multiple runs. Careful about getting too big!")
+
+        rom.ImGui.Separator()
+
+
     end
     rom.ImGui.Spacing() -- End Misc Size Settings
 
@@ -263,6 +287,20 @@ function drawMenu()
 
             config.sizeControl = value
         end
+
+        if config.sizeControl == true then
+            value, used = rom.ImGui.InputFloat("Size Change per Press", config.hubModeGrowth, -1, 1)
+            if used then
+                config.hubModeGrowth = value
+                GrowTraitUpdate()
+            end
+            value, used = rom.ImGui.InputFloat("Pitch Change per Press", config.hubModePitch, -1, 1)
+            if used then
+                config.hubModePitch = value
+                GrowTraitUpdate()
+            end
+        end
+
         rom.ImGui.TextWrapped("* Hub only without below option.")
 
         value, checked = rom.ImGui.Checkbox("Manual Size Control Enabled in Runs", config.sizeControlInRuns)
@@ -273,7 +311,7 @@ function drawMenu()
         end
         rom.ImGui.TextWrapped("* Does not disable unstuck toggle if disabled.")
         rom.ImGui.PushStyleColor(rom.ImGuiCol.Text, 0.75, 0.75, 0, 1)
-        rom.ImGui.TextWrapped("* Will change Max HP if Max HP grow mode enabled! Hub behavior acts like Per Encounter.")
+        rom.ImGui.TextWrapped("* Will change Max HP if Max HP grow mode enabled!")
         rom.ImGui.PopStyleColor()
 
         rom.ImGui.Separator()

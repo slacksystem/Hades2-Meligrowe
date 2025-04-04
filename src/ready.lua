@@ -39,12 +39,20 @@ end
 --puts the funny boon on you at the start of a run (over in reload.lua)
 modutil.mod.Path.Wrap("StartNewRun", function(base, prevRun, args)
 	local retVar = base(prevRun, args)
-	local skipUI = false
+	local skipUICheck = false
+	local keepSizeCheck = config.keepHubSizeIntoRun
 	if prevRun == nil then --fix for crash on new save files
-		skipUI = true
+		skipUICheck = true
 	end
-	AddGrowTraitToHero(skipUI)
+	AddGrowTraitToHero({skipUI = skipUICheck, init = true, keepSize = keepSizeCheck})
 	return retVar
+end)
+
+--puts the other funny boon on you when you respawn in the hub
+modutil.mod.Path.Wrap("StartDeathLoop", function(base, currentRun)
+	base(currentRun)
+	local keepSizeCheck = config.keepSizeInHub
+	AddGrowTraitToHero({init = true, keepSize = keepSizeCheck})
 end)
 
 modutil.mod.Path.Wrap("ApplyTraitSetupFunctions", function(base, unit, args)

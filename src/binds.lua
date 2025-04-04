@@ -201,7 +201,7 @@ function setBinds()
                 fullBindName,
                 Name = "Reset Size to Run Start",
                 function()
-                    if config.sizeControl == true then
+                    if config.sizeControlInRuns == true or (CurrentHubRoom ~= nil and config.sizeControl == true) then
                         GrowHero({ sizeAbsolute = true })
                     end
                 end
@@ -211,9 +211,9 @@ function setBinds()
                 fullBindName,
                 Name = "Get Bigger",
                 function()
-                    if config.sizeControl == true then
-                        if config.growthMode == "Max HP" then AddMaxHealth(10, nil, {Silent = true}) end
-                        GrowHero({ changeValue = 2, doPresentation = true })
+                    if config.sizeControlInRuns == true or (CurrentHubRoom ~= nil and config.sizeControl == true) then
+                        if config.growthMode == "Max HP" then AddMaxHealth(10, nil) end
+                        GrowHero({ changeValue = 1, doPresentation = true })
                     end
                 end
             })
@@ -222,9 +222,9 @@ function setBinds()
                 fullBindName,
                 Name = "Get Bigger (5x)",
                 function()
-                    if config.sizeControl == true then
-                        if config.growthMode == "Max HP" then AddMaxHealth(50, nil, {Silent = true}) end
-                        GrowHero({ changeValue = 10, doPresentation = true })
+                    if config.sizeControlInRuns == true or (CurrentHubRoom ~= nil and config.sizeControl == true) then
+                        if config.growthMode == "Max HP" then AddMaxHealth(50, nil) end
+                        GrowHero({ changeValue = 5, doPresentation = true })
                     end
                 end
             })
@@ -233,9 +233,9 @@ function setBinds()
                 fullBindName,
                 Name = "Get Smaller",
                 function()
-                    if config.sizeControl == true then
-                        if config.growthMode == "Max HP" then AddMaxHealth(-10, nil, {Silent = true}) end
-                        GrowHero({ changeValue = -2, doPresentation = true })
+                    if config.sizeControlInRuns == true or (CurrentHubRoom ~= nil and config.sizeControl == true) then
+                        if config.growthMode == "Max HP" then AddMaxHealth(-10, nil) end
+                        GrowHero({ changeValue = -1, doPresentation = true })
                     end
                 end
             })
@@ -244,9 +244,9 @@ function setBinds()
                 fullBindName,
                 Name = "Get Smaller (5x)",
                 function()
-                    if config.sizeControl == true then
-                        if config.growthMode == "Max HP" then AddMaxHealth(-50, nil, {Silent = true}) end
-                        GrowHero({ changeValue = -10, doPresentation = true })
+                    if config.sizeControlInRuns == true or (CurrentHubRoom ~= nil and config.sizeControl == true) then
+                        if config.growthMode == "Max HP" then AddMaxHealth(-50, nil) end
+                        GrowHero({ changeValue = -5, doPresentation = true })
                     end
                 end
             })

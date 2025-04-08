@@ -6,6 +6,20 @@
 -- this file will be reloaded if it changes during gameplay,
 -- 	so only assign to values or define things here.
 
+function dump(o)
+	if type(o) == 'table' then
+	   local s = '{ '
+	   for k,v in pairs(o) do
+		  if type(k) ~= 'number' then k = '"'..k..'"' end
+		  s = s .. '['..k..'] = ' .. dump(v) .. ','
+	   end
+	   return s .. '} '
+	else
+	   return tostring(o)
+	end
+end
+
+
 --returns false if hero or trait are not found
 function GrowTraitUpdate(args)
 	local unit = nil
@@ -252,12 +266,21 @@ function AddGrowTraitToHero(args)
 
 	if HeroHasTrait(traitName) then return end
 
+	local tD = GetProcessedTraitData({
+		Unit = CurrentRun.Hero,
+		TraitName = traitName,
+		Rarity = "Common",
+	})
+	
+	--anti-crash for hub area
+	tD.Name = traitName
+	tD.TraitOrderingValueCache = -1
+
+
+	--print(dump(tD))
+
 	AddTraitToHero({
-		TraitData = GetProcessedTraitData({
-			Unit = CurrentRun.Hero,
-			TraitName = traitName,
-			Rarity = "Common",
-		}),
+		TraitData = tD,
 		SkipNewTraitHighlight = true,
 		SkipQuestStatusCheck = true,
 		SkipActivatedTraitUpdate = true,

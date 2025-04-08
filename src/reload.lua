@@ -6,6 +6,9 @@
 -- this file will be reloaded if it changes during gameplay,
 -- 	so only assign to values or define things here.
 
+GrowUnstuck = GrowUnstuck or false --lock size to 1.0 toggle
+
+--table print debug function
 function dump(o)
 	if type(o) == 'table' then
 	   local s = '{ '
@@ -127,6 +130,8 @@ function GrowTraitUpdate(args)
 
 	CurrentRun.Hero.trackedScale = currentSize --this exists to allow dialogue to interact
 
+	if GrowUnstuck then currentSize = 1 end
+
 	SetAudioEffectState({ Name = "Chipmunk", Value = chipmunk })
 	SetScale({ Id = unit.ObjectId, Fraction = currentSize, Duration = 0.2 })
 	unit.EffectVfxScale = currentSize
@@ -178,33 +183,39 @@ function GrowHero(args)
 	CurrentRun.Hero.trackedScaleDiff = scaleDiff
 
 	if args and args.doPresentation == true then
-		if scaleDiff > 0 then
-			--grow
-			thread(function()
-				PlaySound({ Name = "/SFX/Enemy Sounds/Wringer/WringerChargeUp", Id = CurrentRun.Hero.ObjectId })
-				wait( 0.02 )
-			end)
+		if not GrowUnstuck then
+			if scaleDiff > 0 then
+				--grow
+				thread(function()
+					PlaySound({ Name = "/SFX/Enemy Sounds/Wringer/WringerChargeUp", Id = CurrentRun.Hero.ObjectId })
+					wait( 0.02 )
+				end)
 
-			thread( InCombatTextArgs, { TargetId = CurrentRun.Hero.ObjectId, Text = "GrowPopUp", PreDelay = 0.35, Duration = 1.5, Cooldown = 1.0 } )
-			SetAnimation({ Name = "MelinoeBoonInteractPowerUp", DestinationId = CurrentRun.Hero.ObjectId })
-			CreateAnimation({ Name = "HealthSparkleShower", DestinationId = CurrentRun.Hero.ObjectId })
-		elseif scaleDiff < 0 then
-			--shrink
-			thread(function()
-				PlaySound({ Name = "/SFX/ThanatosHermesKeepsakeFail", Id = CurrentRun.Hero.ObjectId, Volume = 0.25 })
-				wait( 0.02 )
-			end)
+				thread( InCombatTextArgs, { TargetId = CurrentRun.Hero.ObjectId, Text = "GrowPopUp", PreDelay = 0.35, Duration = 1.5, Cooldown = 1.0 } )
+				SetAnimation({ Name = "MelinoeBoonInteractPowerUp", DestinationId = CurrentRun.Hero.ObjectId })
+				CreateAnimation({ Name = "HealthSparkleShower", DestinationId = CurrentRun.Hero.ObjectId })
+			elseif scaleDiff < 0 then
+				--shrink
+				thread(function()
+					PlaySound({ Name = "/SFX/ThanatosHermesKeepsakeFail", Id = CurrentRun.Hero.ObjectId, Volume = 0.25 })
+					wait( 0.02 )
+				end)
 
-			thread( InCombatTextArgs, { TargetId = CurrentRun.Hero.ObjectId, Text = "ShrinkPopUp", PreDelay = 0.35, Duration = 1.5, Cooldown = 1.0 } )
-			SetAnimation({ Name = "MelinoeShrink", DestinationId = CurrentRun.Hero.ObjectId })
-			CreateAnimation({ Name = "HealthSparkleBurst", DestinationId = CurrentRun.Hero.ObjectId })
+				thread( InCombatTextArgs, { TargetId = CurrentRun.Hero.ObjectId, Text = "ShrinkPopUp", PreDelay = 0.35, Duration = 1.5, Cooldown = 1.0 } )
+				SetAnimation({ Name = "MelinoeShrink", DestinationId = CurrentRun.Hero.ObjectId })
+				CreateAnimation({ Name = "HealthSparkleBurst", DestinationId = CurrentRun.Hero.ObjectId })
+			end
+			
+			if scaleDiff ~= 0 then
+				local globalVoiceLines = GlobalVoiceLines.GrowBiggerVoiceLines --this is actually all size change voice lines don't be fooled
+				thread( PlayVoiceLines, globalVoiceLines, true )
+			
+				ShakeScreen({ Speed = 1000, Distance = 2, Duration = 0.3 })
+				thread( DoRumble, { { ScreenPreWait = 0.02, LeftFraction = 0.3, Duration = 0.3 }, } )
+			end
+		else
+			thread( InCombatTextArgs, { TargetId = CurrentRun.Hero.ObjectId, Text = "UnstuckEnablePopUp", PreDelay = 0.35, Duration = 2.5, Cooldown = 1.0 } )
 		end
-		
-		local globalVoiceLines = GlobalVoiceLines.GrowBiggerVoiceLines --this is actually all size change voice lines don't be fooled
-		thread( PlayVoiceLines, globalVoiceLines, true )
-	
-		ShakeScreen({ Speed = 1000, Distance = 2, Duration = 0.3 })
-		thread( DoRumble, { { ScreenPreWait = 0.02, LeftFraction = 0.3, Duration = 0.3 }, } )
 	end
 end
 
@@ -275,9 +286,6 @@ function AddGrowTraitToHero(args)
 	--anti-crash for hub area
 	tD.Name = traitName
 	tD.TraitOrderingValueCache = -1
-
-
-	--print(dump(tD))
 
 	AddTraitToHero({
 		TraitData = tD,

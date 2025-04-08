@@ -48,34 +48,35 @@ modutil.mod.Path.Wrap("StartNewRun", function(base, prevRun, args)
 	return retVar
 end)
 
---puts the other funny boon on you when you respawn in the hub
-modutil.mod.Path.Wrap("StartDeathLoop", function(base, currentRun)
-	base(currentRun)
+--puts the other funny boon on you when you respawn in the hub (boon selection logic handled in AddGrowTraitToHero)
+--also reloads MelinoeField voice banks so they work in hub
+--this originally was StartDeathLoop, but this gets called from it, ensuring it's executed before it waits for user inputs (preventing a hitch + boon applied immediately)
+modutil.mod.Path.Wrap("DeathAreaRoomTransition", function(base, source, args)
+	base(source, args)
 	local keepSizeCheck = config.keepSizeInHub
 	AddGrowTraitToHero({init = true, keepSize = keepSizeCheck})
+
+	LoadVoiceBanks({ Name = "MelinoeField" })
 end)
 
+--Applying in the same context as setup functions usually run (e.g. Circe's actual boons)
 modutil.mod.Path.Wrap("ApplyTraitSetupFunctions", function(base, unit, args)
 	base(unit, args)
 
-	--Applying in the same context as setup functions usually run (e.g. Circe's actual boons)
 	if not args or (args and not args.Context) then
 		GrowTraitUpdate()
 	end
 
 end)
 
---[[modutil.mod.Path.Wrap("EndEncounterEffects", function(base, currentRun, currentRoom, currentEncounter)
-	EndEncounterEffects_wrap(base, currentRun, currentRoom, currentEncounter)
-	return base(currentRun, currentRoom, currentEncounter)
-end)]]
-
+--ticks down boon for per encounter growth
 modutil.mod.Path.Wrap("CheckChamberTraits", function(base)
 	local retVal = base()
 	CheckChamberTraits_wrap(base)
 	return retVal
 end)
 
+--allows size change from Selene Install to apply even with this mod's changes
 modutil.mod.Path.Wrap("SpellTransformStartPresentation", function(base, user, weaponData, functionArgs, triggerArgs)
 	if GrowTraitUpdate({ Transformed = true }) == false then
 		return base(user, weaponData, functionArgs, triggerArgs)
@@ -83,6 +84,7 @@ modutil.mod.Path.Wrap("SpellTransformStartPresentation", function(base, user, we
 	PlaySound({ Name = "/VO/MelinoeEmotes/EmoteAttackingAxe", Id = CurrentRun.Hero.ObjectId })
 end)
 
+--whoops your install ran out
 modutil.mod.Path.Wrap("SpellTransformEndPresentation", function(base, user, weaponData, functionArgs, triggerArgs)
 	if GrowTraitUpdate() == false then
 		return base(user, weaponData, functionArgs, triggerArgs)
@@ -91,16 +93,19 @@ modutil.mod.Path.Wrap("SpellTransformEndPresentation", function(base, user, weap
 	PlaySound({ Name = "/VO/MelinoeEmotes/EmoteGasping", Id = CurrentRun.Hero.ObjectId })
 end)
 
+--allows circe's boons to work with this mod
 modutil.mod.Path.Wrap("CirceEnlarge", function(base, unit, args, roomArgs)
 	base(unit, args, roomArgs)
 	GrowTraitUpdate()
 end)
 
+--the other circe boon
 modutil.mod.Path.Wrap("CirceShrink", function(base, unit, args, roomArgs)
 	base(unit, args, roomArgs)
 	GrowTraitUpdate()
 end)
 
+--allows max hp growth boon to update when max hp is changed
 modutil.mod.Path.Wrap("ValidateMaxHealth", function(base, blockDelta)
 	base(blockDelta)
 
@@ -115,4 +120,11 @@ modutil.mod.Path.Wrap("ValidateMaxHealth", function(base, blockDelta)
 	if config.growthMode == "Max HP" and HeroHasTrait("HealthGrowTrait") and hasChanged then
 		GrowHero({ doPresentation = true })
 	end
+end)
+
+--keeps MelinoeField voice lines loaded in hub area when fishing (FishingPierStartPresentation loads them)
+modutil.mod.Path.Wrap("FishingPierEndPresentation", function(base, source, args)
+	base(source, args)
+
+	LoadVoiceBanks({ Name = "MelinoeField" })
 end)

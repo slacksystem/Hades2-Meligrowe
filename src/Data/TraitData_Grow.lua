@@ -57,13 +57,13 @@ local text_to_insert_pop_up2 = sjson.to_object({
 }, orderPopUp)
 
 local text_to_insert_pop_up3 = sjson.to_object({
-	Id = "unstuckEnablePopUp",
-	DisplayName = "Size Locked! (Alt J default)",
+	Id = "UnstuckEnablePopUp",
+	DisplayName = "Unstuck on! Alt U (default) to disable!",
 }, orderPopUp)
 
 local text_to_insert_pop_up4 = sjson.to_object({
-	Id = "unstuckDisablePopUp",
-	DisplayName = "Size Unlocked! (Alt J default)",
+	Id = "UnstuckDisablePopUp",
+	DisplayName = "Unstuck off!",
 }, orderPopUp)
 
 local textfilePopUp = rom.path.combine(rom.paths.Content, 'Game/Text/en/HelpText.en.sjson')

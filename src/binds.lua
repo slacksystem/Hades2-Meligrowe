@@ -193,7 +193,15 @@ function setBinds()
                 fullBindName,
                 Name = "Unstuck Toggle (Always Available)",
                 function()
-                    --Activate unstuck mode
+                    GrowUnstuck = not GrowUnstuck
+
+                    if GrowUnstuck then
+                        thread( InCombatTextArgs, { TargetId = CurrentRun.Hero.ObjectId, Text = "UnstuckEnablePopUp", PreDelay = 0, Duration = 2.5, Cooldown = 1.0 } )
+                    else
+                        thread( InCombatTextArgs, { TargetId = CurrentRun.Hero.ObjectId, Text = "UnstuckDisablePopUp", PreDelay = 0, Duration = 2.5, Cooldown = 1.0 } )
+                    end
+
+                    GrowTraitUpdate()
                 end
             })
         elseif bindName == "reset" then

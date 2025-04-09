@@ -22,6 +22,27 @@ function dump(o)
 	end
 end
 
+--helps reset trait ticker mid-run (for CheckChamberTraits logic)
+--may be off by one if set when room is clear. this should only run if boon is added mid-run, or per X rooms is changed mid-run
+function setRoomGrowTraitHelper(encounterDepth, divisor, trait)
+	if encounterDepth == nil or divisor == nil then return end
+
+	encounterDepth = math.max(0, encounterDepth - 2) --passed by value, I am not decrementing this here. depth is 2 more than encounters cleared.
+
+	trait.GrowLevel = math.floor(encounterDepth / divisor) * divisor --round down to closest multiple of X rooms
+    trait.CurrentRoom = encounterDepth - math.floor(encounterDepth / divisor) * divisor
+	trait.RoomsPerUpgrade.Amount = divisor
+	trait.GrowTraitGrowthPerRoomDisplay = (config.growEveryXRooms or 2) * (config.sizeGrowthPerRoom or 0.0225)
+
+	--[[print("Amount: "..trait.RoomsPerUpgrade.Amount)
+	print("EncounterDepth: "..encounterDepth)
+	print("GrowLevel: "..trait.GrowLevel)
+	print("CurrentRoom: "..trait.CurrentRoom)
+	print("")]]
+
+	TraitUIUpdateText( trait )
+end
+
 
 --returns false if hero or trait are not found
 function GrowTraitUpdate(args)
@@ -112,7 +133,7 @@ function GrowTraitUpdate(args)
 		trait.GrowTraitValue = 0.01
 	end
 
-	local chipmunk = GetTotalHeroTraitValue("BaseChipmunkValue")
+	local chipmunk = trait.BaseChipmunkValue
 	local currentSize = trait.GrowTraitValue
 
 	if args ~= nil and args.Transformed == true then
@@ -136,6 +157,8 @@ function GrowTraitUpdate(args)
 	SetAudioEffectState({ Name = "Chipmunk", Value = chipmunk })
 	SetScale({ Id = unit.ObjectId, Fraction = currentSize, Duration = 0.2 })
 	unit.EffectVfxScale = currentSize
+
+	print( "Chipmunk: " .. chipmunk)
 	
 	return true
 end
@@ -238,14 +261,7 @@ function AddGrowTraitToHero(args)
 	CurrentRun.Hero.trackedHP = CurrentRun.Hero.trackedHP or CurrentRun.Hero.MaxHealth --remember HP from run start for certain maxHP mode settings
 
 	if preserveSize then
-		if PreservedScale then
-			print("Old Preserved Scale: " .. PreservedScale)
-		else
-			print("Old Preserved Scale: nil")
-		end
-		
 		CurrentRun.Hero.preservedScale = PreservedScale or CurrentRun.Hero.trackedScale --used to keep persistent scale
-		print("New Preserved Scale: " .. CurrentRun.Hero.preservedScale)
 	end
 
 	--use init if starting a new run. resets certain tracking variables
@@ -300,6 +316,12 @@ function AddGrowTraitToHero(args)
 	--anti-crash for hub area
 	tD.Name = traitName
 	tD.TraitOrderingValueCache = -1
+	
+	--[[if traitName == "GrowTrait" then
+		if tD.RoomsPerUpgrade then
+			tD.RoomsPerUpgrade.Amount = config.growEveryXRooms or 2
+		end
+	end]]
 
 	AddTraitToHero({
 		TraitData = tD,
@@ -309,12 +331,21 @@ function AddGrowTraitToHero(args)
 		SkipUIUpdate = skipUI,
 	})
 
+	if HeroHasTrait("GrowTrait") and traitName == "GrowTrait" then
+		local trait = GetHeroTrait("GrowTrait")
+
+		if trait.RoomsPerUpgrade then
+			trait.RoomsPerUpgrade.Amount = config.growEveryXRooms or 2
+		end
+
+		trait.GrowTraitGrowthPerRoomDisplay = (config.sizeGrowthPerRoom or 0.0225) * (config.growEveryXRooms or 2)
+	end
+
 	--set GrowLevel and room counter to their appropriate levels
 	if traitWasRemoved and HeroHasTrait("GrowTrait") and traitName == "GrowTrait" and CurrentRun.EncounterDepth then
 		local trait = GetHeroTrait("GrowTrait")
 		local divisor = config.growEveryXRooms or 2
-		trait.GrowLevel = math.floor(CurrentRun.EncounterDepth / divisor) * divisor --round down to closest multiple of X rooms
-		trait.CurrentRoom = trait.RoomsPerUpgrade.Amount - CurrentRun.EncounterDepth % divisor
+		setRoomGrowTraitHelper(CurrentRun.EncounterDepth, divisor, trait)
 	end
 
 	--add grow stacks to make size roughly match preserved (this makes size reset work as intended)
@@ -329,12 +360,11 @@ function AddGrowTraitToHero(args)
 			m = "hub"
 		end
 
-		print("Size Preserve triggered...")
+
 		if trait and m then
 			local perStack = config.sizeGrowthPerRoom
 			if m == "hub" then perStack = config.hubModeGrowth end
 
-			print("Size change per stack: " .. perStack)
 			if perStack ~= 0 then
 
 				--[[local unrounded = (CurrentRun.Hero.preservedScale - 1) / perStack
@@ -351,7 +381,6 @@ function AddGrowTraitToHero(args)
 				local growLevel = (CurrentRun.Hero.preservedScale - 1) / perStack
 				GrowHero({ sizeAbsolute = true, changeValue = growLevel})
 
-				print("Set Grow Level: " .. trait.GrowLevel)
 			end
 		end
 	end

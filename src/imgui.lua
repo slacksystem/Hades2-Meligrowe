@@ -114,9 +114,7 @@ function drawMenu()
                 if HeroHasTrait("GrowTrait") and CurrentRun ~= nil and CurrentRun.EncounterDepth then
                     local trait = GetHeroTrait("GrowTrait")
                     local divisor = value
-                    trait.GrowLevel = math.floor(CurrentRun.EncounterDepth / divisor) * divisor --round down to closest multiple of X rooms
-                    trait.CurrentRoom = trait.RoomsPerUpgrade.Amount - (CurrentRun.EncounterDepth % divisor)
-                    TraitUIUpdateText( trait )
+                    setRoomGrowTraitHelper(CurrentRun.EncounterDepth, divisor, trait)
                 end
                 GrowTraitUpdate()
             end

@@ -323,6 +323,7 @@ GlobalVoiceLines.GrowBiggerVoiceLines =
 GrowTraits = {
 	GrowTrait = 
 	{
+		Name = "GrowTrait",
 		Icon = "Boon_Circe_02",
 		BaseChipmunkValue = config.startingPitch,
 		GrowTraitValue = config.startingSize or 1,
@@ -363,6 +364,7 @@ GrowTraits = {
 	},
 	HealthGrowTrait = 
 	{
+		Name = "HealthGrowTrait",
 		Icon = "Boon_Circe_02",
 		BaseChipmunkValue = config.startingPitch,
 		GrowTraitValue = config.startingSize or 1,
@@ -381,6 +383,7 @@ GrowTraits = {
 	},
 	HubGrowTrait = 
 	{
+		Name = "HubGrowTrait",
 		Icon = "Boon_Circe_02",
 		BaseChipmunkValue = 0,
 		GrowTraitValue = 1,

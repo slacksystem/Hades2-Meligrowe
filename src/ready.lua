@@ -44,17 +44,22 @@ modutil.mod.Path.Wrap("StartNewRun", function(base, prevRun, args)
 	if prevRun == nil then --fix for crash on new save files
 		skipUICheck = true
 	end
-	AddGrowTraitToHero({skipUI = skipUICheck, init = true, keepSize = keepSizeCheck})
+	AddGrowTraitToHero({skipUI = skipUICheck, init = true, preserveSize = keepSizeCheck})
 	return retVar
 end)
 
 --puts the other funny boon on you when you respawn in the hub (boon selection logic handled in AddGrowTraitToHero)
---also reloads MelinoeField voice banks so they work in hub
---this originally was StartDeathLoop, but this gets called from it, ensuring it's executed before it waits for user inputs (preventing a hitch + boon applied immediately)
+--this originally was StartDeathLoop, but this gets called from it, ensuring it's executed before it waits for user inputs
+modutil.mod.Path.Wrap("StartDeathLoopPresentation", function(base, currentRun)
+	local keepSizeCheck = config.keepSizeInHub
+	AddGrowTraitToHero({init = true, preserveSize = keepSizeCheck})
+
+	base(currentRun)
+end)
+
+--reloads MelinoeField voice banks so they work in hub
 modutil.mod.Path.Wrap("DeathAreaRoomTransition", function(base, source, args)
 	base(source, args)
-	local keepSizeCheck = config.keepSizeInHub
-	AddGrowTraitToHero({init = true, keepSize = keepSizeCheck})
 
 	LoadVoiceBanks({ Name = "MelinoeField" })
 end)

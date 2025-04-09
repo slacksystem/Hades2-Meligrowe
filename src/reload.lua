@@ -129,6 +129,7 @@ function GrowTraitUpdate(args)
 	end
 
 	CurrentRun.Hero.trackedScale = currentSize --this exists to allow dialogue to interact
+	PreservedScale = currentSize --lets size transfer between boons
 
 	if GrowUnstuck then currentSize = 1 end
 
@@ -223,10 +224,12 @@ function AddGrowTraitToHero(args)
 	
 	local init = false
 	local skipUI = false --this stops new save files from crashing.
+	local preserveSize = false
 
 	if args then
 		init = args.init
 		skipUI = args.skipUI
+		preserveSize = args.preserveSize
 	end
 
 	--initialize tracking values if they don't exist regardless of args
@@ -234,9 +237,20 @@ function AddGrowTraitToHero(args)
 	CurrentRun.Hero.trackedScaleDiff = CurrentRun.Hero.trackedScaleDiff or 0 --supplemental to the above
 	CurrentRun.Hero.trackedHP = CurrentRun.Hero.trackedHP or CurrentRun.Hero.MaxHealth --remember HP from run start for certain maxHP mode settings
 
+	if preserveSize then
+		if PreservedScale then
+			print("Old Preserved Scale: " .. PreservedScale)
+		else
+			print("Old Preserved Scale: nil")
+		end
+		
+		CurrentRun.Hero.preservedScale = PreservedScale or CurrentRun.Hero.trackedScale --used to keep persistent scale
+		print("New Preserved Scale: " .. CurrentRun.Hero.preservedScale)
+	end
+
 	--use init if starting a new run. resets certain tracking variables
 	if init == true then
-		CurrentRun.Hero.trackedScale = config.startingSize or 1.0
+		if not preserveSize then CurrentRun.Hero.trackedScale = config.startingSize or 1.0 end
 		CurrentRun.Hero.trackedScaleDiff = 0
 		CurrentRun.Hero.trackedHP = CurrentRun.Hero.MaxHealth
 	end
@@ -301,6 +315,45 @@ function AddGrowTraitToHero(args)
 		local divisor = config.growEveryXRooms or 2
 		trait.GrowLevel = math.floor(CurrentRun.EncounterDepth / divisor) * divisor --round down to closest multiple of X rooms
 		trait.CurrentRoom = trait.RoomsPerUpgrade.Amount - CurrentRun.EncounterDepth % divisor
+	end
+
+	--add grow stacks to make size roughly match preserved (this makes size reset work as intended)
+	if preserveSize then
+		local trait = nil
+		local m = nil
+		if HeroHasTrait("GrowTrait") then 
+			trait = GetHeroTrait("GrowTrait")
+			m = "room"
+		elseif HeroHasTrait("HubGrowTrait") then
+			trait = GetHeroTrait("HubGrowTrait")
+			m = "hub"
+		end
+
+		print("Size Preserve triggered...")
+		if trait and m then
+			local perStack = config.sizeGrowthPerRoom
+			if m == "hub" then perStack = config.hubModeGrowth end
+
+			print("Size change per stack: " .. perStack)
+			if perStack ~= 0 then
+
+				--[[local unrounded = (CurrentRun.Hero.preservedScale - 1) / perStack
+
+				if unrounded >= 0 then
+					trait.GrowLevel = math.floor(unrounded + 0.5)
+				else --makes sure rounding doesn't fuck up when negative
+					unrounded = -unrounded
+					unrounded = math.floor(unrounded + 0.5)
+					unrounded = -unrounded
+					trait.GrowLevel = unrounded
+				end]]
+
+				local growLevel = (CurrentRun.Hero.preservedScale - 1) / perStack
+				GrowHero({ sizeAbsolute = true, changeValue = growLevel})
+
+				print("Set Grow Level: " .. trait.GrowLevel)
+			end
+		end
 	end
 
 	GrowTraitUpdate()

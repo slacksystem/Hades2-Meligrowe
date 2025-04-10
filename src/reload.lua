@@ -9,16 +9,24 @@
 GrowUnstuck = GrowUnstuck or false --lock size to 1.0 toggle
 
 --table print debug function
-function dump(o)
+function dump(o, i)
+	local count = i or 0
+	local t = ''
+	if count > 0 then
+		for _=1,count do
+			t = t..'\t'
+		end
+	end
+
 	if type(o) == 'table' then
-	   local s = '{ '
+	   local s = '\n' .. t .. '{ \n'
 	   for k,v in pairs(o) do
 		  if type(k) ~= 'number' then k = '"'..k..'"' end
-		  s = s .. '['..k..'] = ' .. dump(v) .. ','
+		  s = s .. t .. '['..k..'] = ' .. dump(v, count + 1)
 	   end
-	   return s .. '} '
+	   return s .. t .. '},\n'
 	else
-	   return tostring(o)
+	   return tostring(o) .. ',\n'
 	end
 end
 
@@ -158,7 +166,7 @@ function GrowTraitUpdate(args)
 	SetScale({ Id = unit.ObjectId, Fraction = currentSize, Duration = 0.2 })
 	unit.EffectVfxScale = currentSize
 
-	print( "Chipmunk: " .. chipmunk)
+	--print( "Chipmunk: " .. chipmunk)
 	
 	return true
 end

@@ -10,9 +10,22 @@
 
 OnAnyLoad {
 	function (triggerArgs)
-		
+		local mapName = triggerArgs.name
+		local roomData = RoomData[mapName]
+		local hubRoomData = HubRoomData[mapName]
+
+		thread(GrowModActivate, mapName, roomData, hubRoomData)
 	end
 }
+
+function GrowModActivate(m, r, h)
+	if m == GameData.HubMapName or h ~= nil or r ~= nil then
+		if CurrentRun ~= nil and CurrentRun.Hero ~= nil and not HeroHasTrait("GrowTrait") and not HeroHasTrait("HealthGrowTrait") and not HeroHasTrait("HubGrowTrait") then
+			AddGrowTraitToHero({init = true})
+			print("No growth trait found. Initializing.")
+		end
+	end
+end
 
 --Debug
 --[[rom.inputs.on_key_pressed{"None H", function()

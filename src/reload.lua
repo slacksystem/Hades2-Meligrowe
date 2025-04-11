@@ -51,6 +51,105 @@ function setRoomGrowTraitHelper(encounterDepth, divisor, trait)
 	TraitUIUpdateText( trait )
 end
 
+function updateGrowDamage()
+	local damage = 1.0
+	local trait = nil
+
+	if CurrentRun and CurrentRun.Hero then
+		if HeroHasTrait("GrowTrait") then
+			trait = GetHeroTrait("GrowTrait")
+		elseif HeroHasTrait("HealthGrowTrait") then
+			trait = GetHeroTrait("HealthGrowTrait")
+		elseif HeroHasTrait("HubGrowTrait") then
+			trait = GetHeroTrait("HubGrowTrait")
+		end
+
+		if trait then
+			if config.statEnableDamage then
+				damage = trait.GrowTraitValue or 1.0
+				damage = math.max(damage, 0.35)
+			end
+
+			trait.DamageValue = damage
+		end
+	end
+end
+
+function updateGrowHealth()
+	local health = 1.0
+	local trait = nil
+
+	if CurrentRun and CurrentRun.Hero then
+		--Does not apply to max health scaling!
+		if HeroHasTrait("GrowTrait") then
+			trait = GetHeroTrait("GrowTrait")
+		elseif HeroHasTrait("HubGrowTrait") then
+			trait = GetHeroTrait("HubGrowTrait")
+		end
+
+		if trait then
+			if config.statEnableHealth then
+				health = trait.GrowTraitValue or 1.0
+				health = math.max(health, 0.1)
+			end
+
+			trait.MaxHealthMultiplier = health
+		end
+	end
+
+	ValidateMaxHealth()
+	thread(UpdateHealthUI)
+end
+
+function updateGrowSpeed()
+	local speed = 1.0
+	local trait = nil
+
+	if CurrentRun and CurrentRun.Hero and config.statEnableSpeed then
+		if HeroHasTrait("GrowTrait") then
+			trait = GetHeroTrait("GrowTrait")
+		elseif HeroHasTrait("HealthGrowTrait") then
+			trait = GetHeroTrait("HealthGrowTrait")
+		elseif HeroHasTrait("HubGrowTrait") then
+			trait = GetHeroTrait("HubGrowTrait")
+		end
+
+		if trait then
+			speed = trait.GrowTraitValue or 1.0
+			speed = math.max(speed, 0.5)
+		end
+	end
+
+	--copied from blood drop method. who knew changing move/dash speed wouldn't be intuitive?
+	--this first bit reverses any changes that were made previously
+	if SessionMapState.GrowSpeedChange then
+		ApplyUnitPropertyChanges( CurrentRun.Hero, SessionMapState.GrowSpeedChange, true, true )
+	end
+	local allPropertyChanges = {
+		{
+			UnitProperty = "Speed",
+			ChangeType = "Multiply",
+			ChangeValue = speed,
+		},
+		{
+			WeaponNames = { "WeaponSprint" },
+			WeaponProperty = "SelfVelocity",
+			ChangeValue = 1100 * ( speed - 1 ),
+			ChangeType = "Add",
+			ExcludeLinked = true,
+		},
+		{
+			WeaponNames = { "WeaponSprint" },
+			WeaponProperty = "SelfVelocityCap",
+			ChangeValue = 740 * ( speed - 1 ),
+			ChangeType = "Add",
+			ExcludeLinked = true,
+		},
+	}
+	SessionMapState.GrowSpeedChange = allPropertyChanges
+	ApplyUnitPropertyChanges( CurrentRun.Hero, SessionMapState.GrowSpeedChange)
+end
+
 
 --returns false if hero or trait are not found
 function GrowTraitUpdate(args)
@@ -137,8 +236,8 @@ function GrowTraitUpdate(args)
 		trait.GrowTraitValue = math.min(trait.GrowTraitValue, config.sizeUpperLimit)
 	end
 
-	if trait.GrowTraitValue <= 0.01 then
-		trait.GrowTraitValue = 0.01
+	if trait.GrowTraitValue <= 0.1 then
+		trait.GrowTraitValue = 0.1
 	end
 
 	local chipmunk = trait.BaseChipmunkValue
@@ -167,6 +266,9 @@ function GrowTraitUpdate(args)
 	unit.EffectVfxScale = currentSize
 
 	--print( "Chipmunk: " .. chipmunk)
+	updateGrowDamage()
+	updateGrowHealth()
+	updateGrowSpeed()
 	
 	return true
 end

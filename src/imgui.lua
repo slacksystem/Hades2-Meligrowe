@@ -339,16 +339,19 @@ function drawMenu()
         value, checked = rom.ImGui.Checkbox("Move Speed", config.statEnableSpeed)
         if checked then
             config.statEnableSpeed = value
+            updateGrowSpeed()
         end
 
         value, checked = rom.ImGui.Checkbox("Damage (% All Damage)", config.statEnableDamage)
         if checked then
             config.statEnableDamage = value
+            updateGrowDamage()
         end
 
         value, checked = rom.ImGui.Checkbox("Max Health (% Increase)", config.statEnableHealth)
         if checked then
             config.statEnableHealth = value
+            updateGrowHealth()
         end
         rom.ImGui.TextWrapped("* Max Health increase doesn't work with Max HP Growth.")
     end --end Change Stats with Growth

@@ -327,6 +327,13 @@ GrowTraits = {
 		Icon = "Boon_Circe_02",
 		BaseChipmunkValue = config.startingPitch,
 		GrowTraitValue = config.startingSize or 1,
+		DamageValue = 1.0,
+		MaxHealthMultiplier = 1.0,
+		AddOutgoingDamageModifiers =
+		{
+			UseTraitValue = "DamageValue",
+			IsMultiplier = true,
+		},
 		--Per Encounter Data
 		GrowTraitGrowthPerRoomDisplay = { BaseValue = (config.sizeGrowthPerRoom or 0.0225) * (config.growEveryXRooms or 2), DecimalPlaces = 4 },
 		GrowLevel = 0,
@@ -369,6 +376,12 @@ GrowTraits = {
 		Icon = "Boon_Circe_02",
 		BaseChipmunkValue = config.startingPitch,
 		GrowTraitValue = config.startingSize or 1,
+		DamageValue = 1.0,
+		AddOutgoingDamageModifiers =
+		{
+			UseTraitValue = "DamageValue",
+			IsMultiplier = true,
+		},
 		--important UI stuff
 		Hidden = config.hideBoon or false,
 		ExtractValues = 
@@ -388,6 +401,13 @@ GrowTraits = {
 		Icon = "Boon_Circe_02",
 		BaseChipmunkValue = 0,
 		GrowTraitValue = 1,
+		DamageValue = 1.0,
+		MaxHealthMultiplier = 1.0,
+		AddOutgoingDamageModifiers =
+		{
+			UseTraitValue = "DamageValue",
+			IsMultiplier = true,
+		},
 		GrowLevel = 0,
 		--important UI stuff
 		Hidden = config.hideBoon or false,

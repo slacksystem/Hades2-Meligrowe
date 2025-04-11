@@ -51,6 +51,7 @@ local function on_reload()
 	import 'reload.lua'
 	import 'binds.lua'
 	import 'imgui.lua'
+	import 'BiomeMapPresentation_wrap.lua'
 	setBinds()
 end
 

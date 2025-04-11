@@ -76,7 +76,7 @@ end)
 --ticks down boon for per encounter growth
 modutil.mod.Path.Wrap("CheckChamberTraits", function(base)
 	local retVal = base()
-	CheckChamberTraits_wrap(base)
+	CheckChamberTraits_wrap()
 	return retVal
 end)
 
@@ -131,4 +131,8 @@ modutil.mod.Path.Wrap("FishingPierEndPresentation", function(base, source, args)
 	base(source, args)
 
 	LoadVoiceBanks({ Name = "MelinoeField" })
+end)
+
+modutil.mod.Path.Wrap("BiomeMapPresentation", function(base, source, args)
+	BiomeMapPresentation_wrap(source, args)
 end)

@@ -540,7 +540,7 @@ function AddGrowTraitToHero(args)
 	GrowTraitUpdate()
 end
 
-function CheckChamberTraits_wrap(base)
+function CheckChamberTraits_wrap()
 	if not HeroHasTrait("GrowTrait") then return end
 	
 	local trait = GetHeroTrait("GrowTrait")

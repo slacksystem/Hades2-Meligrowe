@@ -331,6 +331,7 @@ GrowTraits = {
 		GrowTraitGrowthPerRoomDisplay = { BaseValue = (config.sizeGrowthPerRoom or 0.0225) * (config.growEveryXRooms or 2), DecimalPlaces = 4 },
 		GrowLevel = 0,
 		--important UI/per room interaction stuff
+		Hidden = config.hideBoon or false,
 		ShowInHUD = true,
 		CurrentRoom = 0,
 		RoomsPerUpgrade = 
@@ -369,7 +370,7 @@ GrowTraits = {
 		BaseChipmunkValue = config.startingPitch,
 		GrowTraitValue = config.startingSize or 1,
 		--important UI stuff
-		showInHUD = true,
+		Hidden = config.hideBoon or false,
 		ExtractValues = 
 		{
 			{
@@ -389,7 +390,7 @@ GrowTraits = {
 		GrowTraitValue = 1,
 		GrowLevel = 0,
 		--important UI stuff
-		showInHUD = true,
+		Hidden = config.hideBoon or false,
 		ExtractValues = 
 		{
 			{

@@ -1,3 +1,5 @@
+---@diagnostic disable: lowercase-global
+
 rom.gui.add_imgui(function()
     if rom.ImGui.Begin("Meligrowe") then
         drawMenu()
@@ -260,7 +262,99 @@ function drawMenu()
     end --End Limits
     rom.ImGui.Spacing()
 
-    if rom.ImGui.CollapsingHeader("Misc Size Settings") then
+    if rom.ImGui.CollapsingHeader("Growth Visual/Audio Toggles") then
+        value, checked = rom.ImGui.Checkbox("Sound Effects", config.playSFX)
+        if checked then
+            config.playSFX = value
+        end
+
+        value, checked = rom.ImGui.Checkbox("Voice Lines", config.playVoiceLines)
+        if checked then
+            config.playVoiceLines = value
+        end
+
+        value, checked = rom.ImGui.Checkbox("Text Pop-Ups", config.showText)
+        if checked then
+            config.showText = value
+        end
+        rom.ImGui.TextWrapped("* Does not disable pop-up for unstuck feature.")
+
+        value, checked = rom.ImGui.Checkbox("Model Animations", config.playAnimation)
+        if checked then
+            config.playAnimation = value
+        end
+
+        if config.playAnimation == true then
+            value, checked = rom.ImGui.Checkbox("Alternate Growth Animation", config.altAnimation)
+            if checked then
+                config.altAnimation = value
+            end
+            rom.ImGui.TextWrapped("* Changes growth animation to the same as shrinking: staggering instead of \"powering up\".")
+        end
+
+        value, checked = rom.ImGui.Checkbox("Particle Effects", config.showParticles)
+        if checked then
+            config.showParticles = value
+        end
+
+        value, checked = rom.ImGui.Checkbox("Controller Vibration", config.controllerVibration)
+        if checked then
+            config.controllerVibration = value
+        end
+        rom.ImGui.TextWrapped("* Needs vibration enabled in game settings to function.")
+        
+        value, checked = rom.ImGui.Checkbox("Screen Shake", config.screenShake)
+        if checked then
+            config.screenShake = value
+        end
+        rom.ImGui.TextWrapped("* Needs screen shake enabled in game settings to function.")
+
+        value, checked = rom.ImGui.Checkbox("Hide Growth Boon in UI", config.hideBoon)
+        if checked then
+            config.hideBoon = value
+            if CurrentRun and CurrentRun.Hero then
+                local trait = nil
+                local isPerRoom = false
+
+                if HeroHasTrait("GrowTrait") then
+                    trait = GetHeroTrait("GrowTrait")
+                    isPerRoom = true
+                elseif HeroHasTrait("HealthGrowTrait") then
+                    trait = GetHeroTrait("HealthGrowTrait")
+                elseif HeroHasTrait("HubGrowTrait") then
+                    trait = GetHeroTrait("HubGrowTrait")
+                end
+
+                if trait then
+                    if isPerRoom then AddGrowTraitToHero({remakeTrait = true}) end
+                    trait.Hidden = value
+                    TraitUIUpdateText( trait )
+                end
+            end
+        end
+    end -- end Growth Visual/Audio Toggles
+    rom.ImGui.Spacing()
+
+    if rom.ImGui.CollapsingHeader("Change Stats with Growth") then
+        value, checked = rom.ImGui.Checkbox("Move Speed", config.statEnableSpeed)
+        if checked then
+            config.statEnableSpeed = value
+        end
+
+        value, checked = rom.ImGui.Checkbox("Damage (% All Damage)", config.statEnableDamage)
+        if checked then
+            config.statEnableDamage = value
+        end
+
+        value, checked = rom.ImGui.Checkbox("Max Health (% Increase)", config.statEnableHealth)
+        if checked then
+            config.statEnableHealth = value
+        end
+        rom.ImGui.TextWrapped("* Max Health increase doesn't work with Max HP Growth.")
+    end --end Change Stats with Growth
+    rom.ImGui.Spacing()
+
+    if rom.ImGui.CollapsingHeader("Preserve Size Changes") then
         value, checked = rom.ImGui.Checkbox("Keep Size Changes in Hub (Crossroads)", config.keepSizeInHub)
         if checked then
             config.keepSizeInHub = value

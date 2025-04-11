@@ -1,3 +1,5 @@
+---@diagnostic disable: lowercase-global
+
 keycodeMap = {
     [0] = "Escape",
     [1] = "F1",

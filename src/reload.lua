@@ -218,32 +218,44 @@ function GrowHero(args)
 		if not GrowUnstuck then
 			if scaleDiff > 0 then
 				--grow
-				thread(function()
-					PlaySound({ Name = "/SFX/Enemy Sounds/Wringer/WringerChargeUp", Id = CurrentRun.Hero.ObjectId })
-					wait( 0.02 )
-				end)
+				if config.playSFX == true then
+					thread(function()
+						PlaySound({ Name = "/SFX/Enemy Sounds/Wringer/WringerChargeUp", Id = CurrentRun.Hero.ObjectId })
+						wait( 0.02 )
+					end)
+				end
 
-				thread( InCombatTextArgs, { TargetId = CurrentRun.Hero.ObjectId, Text = "GrowPopUp", PreDelay = 0.35, Duration = 1.5, Cooldown = 1.0 } )
-				SetAnimation({ Name = "MelinoeBoonInteractPowerUp", DestinationId = CurrentRun.Hero.ObjectId })
-				CreateAnimation({ Name = "HealthSparkleShower", DestinationId = CurrentRun.Hero.ObjectId })
+				if config.showText == true then thread( InCombatTextArgs, { TargetId = CurrentRun.Hero.ObjectId, Text = "GrowPopUp", PreDelay = 0.35, Duration = 1.5, Cooldown = 1.0 } ) end
+				if config.playAnimation == true then
+					if config.altAnimation == true then
+						SetAnimation({ Name = "MelinoeShrink", DestinationId = CurrentRun.Hero.ObjectId })
+					else
+						SetAnimation({ Name = "MelinoeBoonInteractPowerUp", DestinationId = CurrentRun.Hero.ObjectId })
+					end
+				end
+				if config.showParticles == true then CreateAnimation({ Name = "HealthSparkleShower", DestinationId = CurrentRun.Hero.ObjectId }) end
 			elseif scaleDiff < 0 then
 				--shrink
-				thread(function()
-					PlaySound({ Name = "/SFX/ThanatosHermesKeepsakeFail", Id = CurrentRun.Hero.ObjectId, Volume = 0.25 })
-					wait( 0.02 )
-				end)
+				if config.playSFX == true then
+					thread(function()
+						PlaySound({ Name = "/SFX/ThanatosHermesKeepsakeFail", Id = CurrentRun.Hero.ObjectId, Volume = 0.25 })
+						wait( 0.02 )
+					end)
+				end
 
-				thread( InCombatTextArgs, { TargetId = CurrentRun.Hero.ObjectId, Text = "ShrinkPopUp", PreDelay = 0.35, Duration = 1.5, Cooldown = 1.0 } )
-				SetAnimation({ Name = "MelinoeShrink", DestinationId = CurrentRun.Hero.ObjectId })
-				CreateAnimation({ Name = "HealthSparkleBurst", DestinationId = CurrentRun.Hero.ObjectId })
+				if config.showText == true then thread( InCombatTextArgs, { TargetId = CurrentRun.Hero.ObjectId, Text = "ShrinkPopUp", PreDelay = 0.35, Duration = 1.5, Cooldown = 1.0 } ) end
+				if config.playAnimation == true then SetAnimation({ Name = "MelinoeShrink", DestinationId = CurrentRun.Hero.ObjectId }) end
+				if config.showParticles == true then CreateAnimation({ Name = "HealthSparkleBurst", DestinationId = CurrentRun.Hero.ObjectId }) end
 			end
 			
 			if scaleDiff ~= 0 then
-				local globalVoiceLines = GlobalVoiceLines.GrowBiggerVoiceLines --this is actually all size change voice lines don't be fooled
-				thread( PlayVoiceLines, globalVoiceLines, true )
+				if config.playVoiceLines == true then
+					local globalVoiceLines = GlobalVoiceLines.GrowBiggerVoiceLines --this is actually all size change voice lines don't be fooled
+					thread( PlayVoiceLines, globalVoiceLines, true )
+				end
 			
-				ShakeScreen({ Speed = 1000, Distance = 2, Duration = 0.3 })
-				thread( DoRumble, { { ScreenPreWait = 0.02, LeftFraction = 0.3, Duration = 0.3 }, } )
+				if config.screenShake == true then ShakeScreen({ Speed = 1000, Distance = 2, Duration = 0.3 }) end
+				if config.controllerVibration == true then thread( DoRumble, { { ScreenPreWait = 0.02, LeftFraction = 0.3, Duration = 0.3 }, } ) end
 			end
 		else
 			thread( InCombatTextArgs, { TargetId = CurrentRun.Hero.ObjectId, Text = "UnstuckEnablePopUp", PreDelay = 0.35, Duration = 2.5, Cooldown = 1.0 } )
@@ -256,11 +268,13 @@ function AddGrowTraitToHero(args)
 	local init = false
 	local skipUI = false --this stops new save files from crashing.
 	local preserveSize = false
+	local remakeTrait = false --Hidden doesn't play nice with ShowInHUD. have to remake the trait to hide it.
 
 	if args then
 		init = args.init
 		skipUI = args.skipUI
 		preserveSize = args.preserveSize
+		remakeTrait = args.remakeTrait
 	end
 
 	--initialize tracking values if they don't exist regardless of args
@@ -303,12 +317,21 @@ function AddGrowTraitToHero(args)
 
 	local traitsToCheck = { "HubGrowTrait", "GrowTrait", "HealthGrowTrait" }
 	local traitWasRemoved = false
+	local stacksToKeep = 0
+	local roomCounter = 0
 
 	for _, traitCheck in pairs(traitsToCheck) do
 		if traitCheck ~= traitName then
 			if HeroHasTrait(traitCheck) then
 				RemoveTrait(CurrentRun.Hero, traitCheck, {SkipUIUpdate = skipUI})
 				traitWasRemoved = true
+			end
+		elseif remakeTrait == true then
+			if HeroHasTrait(traitCheck) then
+				local trait = GetHeroTrait(traitCheck)
+				stacksToKeep = trait.GrowLevel or 0
+				roomCounter = trait.CurrentRoom or 0
+				RemoveTrait(CurrentRun.Hero, traitCheck, {SkipUIUpdate = skipUI})
 			end
 		end
 	end
@@ -324,6 +347,11 @@ function AddGrowTraitToHero(args)
 	--anti-crash for hub area
 	tD.Name = traitName
 	tD.TraitOrderingValueCache = -1
+
+	tD.Hidden = config.hideBoon
+	if config.hideBoon == true and remakeTrait == true then
+		tD.ShowInHUD = nil
+	end
 	
 	--[[if traitName == "GrowTrait" then
 		if tD.RoomsPerUpgrade then
@@ -347,6 +375,20 @@ function AddGrowTraitToHero(args)
 		end
 
 		trait.GrowTraitGrowthPerRoomDisplay = (config.sizeGrowthPerRoom or 0.0225) * (config.growEveryXRooms or 2)
+		
+		if remakeTrait == true then
+			trait.GrowLevel = stacksToKeep
+			trait.CurrentRoom = roomCounter
+			TraitUIUpdateText( trait )
+			GrowHero({ sizeAbsolute = true, changeValue = stacksToKeep })
+		end
+	end
+
+	if HeroHasTrait("HubGrowTrait") and traitName == "HubGrowTrait" and remakeTrait == true then
+		local trait = GetHeroTrait("HubGrowTrait")
+
+		trait.GrowLevel = stacksToKeep
+		GrowHero({ sizeAbsolute = true, changeValue = stacksToKeep })
 	end
 
 	--set GrowLevel and room counter to their appropriate levels

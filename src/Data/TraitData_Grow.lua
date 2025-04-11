@@ -213,7 +213,6 @@ GlobalVoiceLines.GrowBiggerVoiceLines =
 				{ Cue = "/VO/Melinoe_2359", Text = "Grow strong." },
 				{ Cue = "/VO/Melinoe_2360", Text = "Grow and flourish." },
 				{ Cue = "/VO/Melinoe_2304", Text = "Grow and thrive." },
-				{ Cue = "/VO/Melinoe_2303", Text = "You're growing strong." },
 				{ Cue = "/VO/Melinoe_0569", Text = "{#Emph}<Inhale>" },
 				{ Cue = "/VO/Melinoe_3279", Text = "Wow..." },
 				{ Cue = "/VO/MelinoeField_1895", Text = "That's potent..." },

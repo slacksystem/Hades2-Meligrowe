@@ -14,9 +14,17 @@ OnAnyLoad {
 		local roomData = RoomData[mapName]
 		local hubRoomData = HubRoomData[mapName]
 
+		--load sound banks used in runs in the hub area
+		thread(loadGrowVoiceBanks, mapName, hubRoomData)
 		thread(GrowModActivate, mapName, roomData, hubRoomData)
 	end
 }
+
+function loadGrowVoiceBanks(m, h)
+	if h ~= nil or m == GameData.HubMapName then
+		LoadVoiceBanks("MelinoeField", true)
+	end
+end
 
 function GrowModActivate(m, r, h)
 	if m == GameData.HubMapName or h ~= nil or r ~= nil then
@@ -26,28 +34,6 @@ function GrowModActivate(m, r, h)
 		end
 	end
 end
-
---Debug
---[[rom.inputs.on_key_pressed{"None H", function()
-		
-	end
-}
-
-rom.inputs.on_key_pressed{"None J", function()
-		GrowHero()
-	end
-}
-
-rom.inputs.on_key_pressed{"None K", function()
-		GrowHero({ changeValue = 25})
-	end
-}
-
-rom.inputs.on_key_pressed{"None L", function()
-	GrowHero({ changeValue = 2, doPresentation = true })
-end
-}]]
-
 
 --puts the funny boon on you at the start of a run (over in reload.lua)
 modutil.mod.Path.Wrap("StartNewRun", function(base, prevRun, args)
@@ -71,11 +57,11 @@ modutil.mod.Path.Wrap("StartDeathLoopPresentation", function(base, currentRun)
 end)
 
 --reloads MelinoeField voice banks so they work in hub
-modutil.mod.Path.Wrap("DeathAreaRoomTransition", function(base, source, args)
+--[[modutil.mod.Path.Wrap("DeathAreaRoomTransition", function(base, source, args)
 	base(source, args)
 
 	LoadVoiceBanks({ Name = "MelinoeField" })
-end)
+end)]]
 
 --Applying in the same context as setup functions usually run (e.g. Circe's actual boons)
 modutil.mod.Path.Wrap("ApplyTraitSetupFunctions", function(base, unit, args)

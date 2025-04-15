@@ -129,7 +129,7 @@ GlobalVoiceLines.GrowBiggerVoiceLines =
 		{
 			{
 				Path = { "CurrentRun", "CurrentRoom", "Encounter", "Name" },
-				IsNone = { "Shop", "DevotionTestF", "DevotionTestG", "DevotionTestH", "DevotionTestN", "DevotionTestO", "DevotionTestP", --[["ArtemisCombatIntro",
+				IsNone = { "Shop", "DevotionTestF", "DevotionTestG", "DevotionTestH", "DevotionTestN", "DevotionTestO", "DevotionTestP", "ArtemisCombatIntro",
 					"ArtemisCombatF", "ArtemisCombatF2",
 					"ArtemisCombatG", "ArtemisCombatG2",
 					"ArtemisCombatN", "ArtemisCombatN2",
@@ -139,7 +139,7 @@ GlobalVoiceLines.GrowBiggerVoiceLines =
 					"NemesisCombatF", "NemesisCombatG",
 					"NemesisCombatH", "IcarusCombatO",
 					"IcarusCombatO2", "IcarusCombatP",
-					"IcarusCombatP2", ]]},
+					"IcarusCombatP2", },
 			},
 			{
 				Path = { "CurrentRun", "CurrentRoom", "Name" },
@@ -233,6 +233,7 @@ GlobalVoiceLines.GrowBiggerVoiceLines =
 				{ Cue = "/VO/Melinoe_3593", Text = "You're getting stronger." },
 				{ Cue = "/VO/Melinoe_3593_B", Text = "You're getting stronger." },
 				{ Cue = "/VO/MelinoeField_0669", Text = "Feeling fine...." },
+				{ Cue = "/VO/Melinoe_1522", Text = "Getting warmer..." },
 			},
 		},
 		{
@@ -422,6 +423,13 @@ GrowTraits = {
 		},
 	},
 }
+
+local spicyLine = { Cue = "/VO/Melinoe_1526", Text = "{#Emph}Whew {#Prev}that's hot..." }
+
+
+if config.spicy == true then
+	table.insert(GlobalVoiceLines.GrowBiggerVoiceLines[1][1][2], spicyLine)
+end
 
 --add trait to the game
 for key, growTrait in pairs(GrowTraits) do

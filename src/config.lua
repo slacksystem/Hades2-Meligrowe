@@ -36,6 +36,7 @@ local config = {
 	controllerVibration = true,
 	screenShake = true,
 	hideBoon = false,
+	scalePortrait = true,
 	altAnimation = false,
 	statEnableSpeed = false,
 	statEnableDamage = false,
@@ -58,6 +59,7 @@ local config = {
 	muchSmallerBind = "Alt O",
     muchSmallerModifier = "Alt",
     muchSmallerKey = "O",
+	spicy = false,
 }
 
 local configDesc = {
@@ -96,6 +98,7 @@ local configDesc = {
 	controllerVibration = "Controller vibrates when Mel changes size. Vibration must be toggled on in-game, Steam Input sometimes blocks vibration.",
 	screenShake = "Screen shakes when Mel changes size. Screen shake must be toggled on in-game.",
 	hideBoon = "Hides the growth boons from your boon listing.",
+	scalePortrait = "Changes Mel's portrait size as she does.",
 	altAnimation = "Uses the same animation as shrinking for growth. Looks like she's staggering instead of powering up.",
 	statEnableSpeed = "Gains movement speed with growth. Makes movement look proportional to size.",
 	statEnableDamage = "Gains a percent all damage modifier with growth.",
@@ -118,6 +121,7 @@ local configDesc = {
 	muchSmallerBind = "Bind to make Melinoe shrink a LOT. Shrinks by 5x the amount of the shrink bind. Will grow if size change is negative. Takes up to 50 max HP in max HP mode, bottoming out at 1.",
     muchSmallerModifier = "Modifier for major shrink bind. Only used for menus.",
     muchSmallerKey = "Key for major shrink bind. Only used for menus.",
+	spicy = "Don't worry about it. Leave this off... unless?",
 }
 
 return config, configDesc

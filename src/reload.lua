@@ -31,22 +31,18 @@ function dump(o, i)
 end
 
 --helps reset trait ticker mid-run (for CheckChamberTraits logic)
---may be off by one if set when room is clear. this should only run if boon is added mid-run, or per X rooms is changed mid-run
-function setRoomGrowTraitHelper(encounterDepth, divisor, trait)
-	if encounterDepth == nil or divisor == nil then return end
+--runs if boon is added/switched mid-run, or per X rooms is changed mid-run
+function setRoomGrowTraitHelper(level, divisor, trait)
+	if level == nil or divisor == nil then return end
 
-	encounterDepth = math.max(0, encounterDepth - 2) --passed by value, I am not decrementing this here. depth is 2 more than encounters cleared.
-
-	trait.GrowLevel = math.floor(encounterDepth / divisor) * divisor --round down to closest multiple of X rooms
-    trait.CurrentRoom = encounterDepth - math.floor(encounterDepth / divisor) * divisor
+    trait.CurrentRoom = level - math.floor(level / divisor) * divisor
 	trait.RoomsPerUpgrade.Amount = divisor
 	trait.GrowTraitGrowthPerRoomDisplay = (config.growEveryXRooms or 2) * (config.sizeGrowthPerRoom or 0.0225)
 
-	--[[print("Amount: "..trait.RoomsPerUpgrade.Amount)
-	print("EncounterDepth: "..encounterDepth)
+	print("Amount: "..trait.RoomsPerUpgrade.Amount)
 	print("GrowLevel: "..trait.GrowLevel)
 	print("CurrentRoom: "..trait.CurrentRoom)
-	print("")]]
+	print("")
 
 	TraitUIUpdateText( trait )
 end
@@ -493,11 +489,13 @@ function AddGrowTraitToHero(args)
 		GrowHero({ sizeAbsolute = true, changeValue = stacksToKeep })
 	end
 
-	--set GrowLevel and room counter to their appropriate levels
+	--if boon was switched or added mid-run, set GrowLevel and room counter to their appropriate levels
 	if traitWasRemoved and HeroHasTrait("GrowTrait") and traitName == "GrowTrait" and CurrentRun.EncounterDepth then
 		local trait = GetHeroTrait("GrowTrait")
 		local divisor = config.growEveryXRooms or 2
-		setRoomGrowTraitHelper(CurrentRun.EncounterDepth, divisor, trait)
+		local level = CurrentRun.EncounterDepth - 2
+		trait.GrowLevel = math.floor(level / divisor) * divisor --round down to closest multiple of X rooms
+		setRoomGrowTraitHelper(math.max(0, level), divisor, trait) --depth is 2 more than encounters cleared.
 	end
 
 	--add grow stacks to make size roughly match preserved (this makes size reset work as intended)

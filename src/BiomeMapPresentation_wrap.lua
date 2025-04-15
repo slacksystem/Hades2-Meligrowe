@@ -1,4 +1,5 @@
 ---@diagnostic disable: undefined-global
+---@diagnostic disable: deprecated
 
 function BiomeMapPresentation_wrap( source, args )
 

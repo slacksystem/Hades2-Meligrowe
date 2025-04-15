@@ -133,6 +133,12 @@ modutil.mod.Path.Wrap("FishingPierEndPresentation", function(base, source, args)
 	LoadVoiceBanks({ Name = "MelinoeField" })
 end)
 
+--overrides between-act map animation to scale the melinoe figure based on her size
 modutil.mod.Path.Wrap("BiomeMapPresentation", function(base, source, args)
 	BiomeMapPresentation_wrap(source, args)
+end)
+
+--overrides dialogue screen behavior to scale melinoe's portrait
+modutil.mod.Path.Wrap("DisplayTextLine", function(base, screen, source, line, parentLine, nextLine, args)
+	DisplayTextLine_wrap( screen, source, line, parentLine, nextLine, args )
 end)

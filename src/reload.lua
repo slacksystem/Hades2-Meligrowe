@@ -39,11 +39,6 @@ function setRoomGrowTraitHelper(level, divisor, trait)
 	trait.RoomsPerUpgrade.Amount = divisor
 	trait.GrowTraitGrowthPerRoomDisplay = (config.growEveryXRooms or 2) * (config.sizeGrowthPerRoom or 0.0225)
 
-	print("Amount: "..trait.RoomsPerUpgrade.Amount)
-	print("GrowLevel: "..trait.GrowLevel)
-	print("CurrentRoom: "..trait.CurrentRoom)
-	print("")
-
 	TraitUIUpdateText( trait )
 end
 
@@ -271,7 +266,7 @@ function GrowTraitUpdate(args)
 	SetScale({ Id = unit.ObjectId, Fraction = currentSize, Duration = growthSpeed })
 	unit.EffectVfxScale = currentSize
 
-	--print( "Chipmunk: " .. chipmunk)
+	
 	updateGrowDamage()
 	updateGrowHealth()
 	updateGrowSpeed() --not related to the above growth speed. this one's the stat (mel's run speed)
@@ -375,13 +370,15 @@ function AddGrowTraitToHero(args)
 	
 	local init = false
 	local skipUI = false --this stops new save files from crashing.
-	local preserveSize = false
+	local preserveSize = false --allows keeping size from run to hub or vice versa
+	local useRunEndSize = false --flags specifically run end for the above. kind of a spaghetti bugfix thing.
 	local remakeTrait = false --Hidden doesn't play nice with ShowInHUD. have to remake the trait to hide it.
 
 	if args then
 		init = args.init
 		skipUI = args.skipUI
 		preserveSize = args.preserveSize
+		useRunEndSize = args.useRunEndSize
 		remakeTrait = args.remakeTrait
 	end
 
@@ -391,7 +388,12 @@ function AddGrowTraitToHero(args)
 	CurrentRun.Hero.trackedHP = CurrentRun.Hero.trackedHP or CurrentRun.Hero.MaxHealth --remember HP from run start for certain maxHP mode settings
 
 	if preserveSize then
-		CurrentRun.Hero.preservedScale = PreservedScale or CurrentRun.Hero.trackedScale --used to keep persistent scale
+		--used to keep persistent scale
+		if useRunEndSize == true then
+			CurrentRun.Hero.preservedScale = RunEndScale or PreservedScale or CurrentRun.Hero.trackedScale
+		else
+			CurrentRun.Hero.preservedScale = PreservedScale or CurrentRun.Hero.trackedScale
+		end
 	end
 
 	--use init if starting a new run. resets certain tracking variables
@@ -509,7 +511,7 @@ function AddGrowTraitToHero(args)
 	end
 
 	--add grow stacks to make size roughly match preserved (this makes size reset work as intended)
-	if preserveSize then
+	if preserveSize == true then
 		local trait = nil
 		local m = nil
 		if HeroHasTrait("GrowTrait") then 
@@ -523,10 +525,11 @@ function AddGrowTraitToHero(args)
 
 		if trait and m then
 			local perStack = config.sizeGrowthPerRoom
-			if m == "hub" then perStack = config.hubModeGrowth end
+			if m == "hub" then
+				perStack = config.hubModeGrowth
+			end
 
 			if perStack ~= 0 then
-
 				--[[local unrounded = (CurrentRun.Hero.preservedScale - 1) / perStack
 
 				if unrounded >= 0 then
@@ -613,18 +616,18 @@ function resetSettings()
 	config.resetBind = "Alt J"
 	config.resetModifier = "Alt"
 	config.resetKey = "J"
-	config.biggerBind = "None I"
+	config.biggerBind = "None O"
 	config.biggerModifier = "None"
-	config.biggerKey = "I"
-	config.muchBiggerBind = "Alt I"
+	config.biggerKey = "O"
+	config.muchBiggerBind = "Alt O"
 	config.muchBiggerModifier = "Alt"
-	config.muchBiggerKey = "I"
-	config.smallerBind = "None O"
+	config.muchBiggerKey = "O"
+	config.smallerBind = "None P"
 	config.smallerModifier = "None"
-	config.smallerKey = "O"
-	config.muchSmallerBind = "Alt O"
+	config.smallerKey = "P"
+	config.muchSmallerBind = "Alt P"
 	config.muchSmallerModifier = "Alt"
-	config.muchSmallerKey = "O"
+	config.muchSmallerKey = "P"
 	AddGrowTraitToHero({remakeTrait = true})
 	setBinds()
 end

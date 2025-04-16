@@ -222,7 +222,7 @@ function setBinds()
                 Name = "Get Bigger",
                 function()
                     if config.sizeControlInRuns == true or (CurrentHubRoom ~= nil and config.sizeControl == true) then
-                        if config.growthMode == "Max HP" then AddMaxHealth(10, nil) end
+                        if CurrentRun and CurrentRun.Hero and HeroHasTrait("HealthGrowTrait") then AddMaxHealth(10, nil) end
                         GrowHero({ changeValue = 1, doPresentation = true })
                     end
                 end
@@ -233,7 +233,7 @@ function setBinds()
                 Name = "Get Bigger (5x)",
                 function()
                     if config.sizeControlInRuns == true or (CurrentHubRoom ~= nil and config.sizeControl == true) then
-                        if config.growthMode == "Max HP" then AddMaxHealth(50, nil) end
+                        if CurrentRun and CurrentRun.Hero and HeroHasTrait("HealthGrowTrait") then AddMaxHealth(50, nil) end
                         GrowHero({ changeValue = 5, doPresentation = true })
                     end
                 end
@@ -244,7 +244,7 @@ function setBinds()
                 Name = "Get Smaller",
                 function()
                     if config.sizeControlInRuns == true or (CurrentHubRoom ~= nil and config.sizeControl == true) then
-                        if config.growthMode == "Max HP" then AddMaxHealth(-10, nil) end
+                        if CurrentRun and CurrentRun.Hero and HeroHasTrait("HealthGrowTrait") then AddMaxHealth(-10, nil) end
                         GrowHero({ changeValue = -1, doPresentation = true })
                     end
                 end
@@ -255,7 +255,7 @@ function setBinds()
                 Name = "Get Smaller (5x)",
                 function()
                     if config.sizeControlInRuns == true or (CurrentHubRoom ~= nil and config.sizeControl == true) then
-                        if config.growthMode == "Max HP" then AddMaxHealth(-50, nil) end
+                        if CurrentRun and CurrentRun.Hero and HeroHasTrait("HealthGrowTrait") then AddMaxHealth(-50, nil) end
                         GrowHero({ changeValue = -5, doPresentation = true })
                     end
                 end

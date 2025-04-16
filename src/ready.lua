@@ -30,7 +30,6 @@ function GrowModActivate(m, r, h)
 	if m == GameData.HubMapName or h ~= nil or r ~= nil then
 		if CurrentRun ~= nil and CurrentRun.Hero ~= nil and not HeroHasTrait("GrowTrait") and not HeroHasTrait("HealthGrowTrait") and not HeroHasTrait("HubGrowTrait") then
 			AddGrowTraitToHero({init = true})
-			print("No growth trait found. Initializing.")
 		end
 	end
 end
@@ -51,7 +50,7 @@ end)
 --this originally was StartDeathLoop, but this gets called from it, ensuring it's executed before it waits for user inputs
 modutil.mod.Path.Wrap("StartDeathLoopPresentation", function(base, currentRun)
 	local keepSizeCheck = config.keepSizeInHub
-	AddGrowTraitToHero({init = true, preserveSize = keepSizeCheck})
+	AddGrowTraitToHero({init = true, preserveSize = keepSizeCheck, useRunEndSize = true})
 
 	base(currentRun)
 end)
@@ -141,4 +140,11 @@ end)
 --overrides dialogue screen behavior to scale melinoe's portrait
 modutil.mod.Path.Wrap("DisplayTextLine", function(base, screen, source, line, parentLine, nextLine, args)
 	DisplayTextLine_wrap( screen, source, line, parentLine, nextLine, args )
+end)
+
+--Makes preserving size into run work properly with Max HP scaling. Nabs the final size value a little early.
+modutil.mod.Path.Wrap("RecordRunStats", function(base)
+	base()
+
+	RunEndScale = PreservedScale or 1.0
 end)

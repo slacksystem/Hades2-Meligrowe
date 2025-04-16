@@ -257,14 +257,24 @@ function GrowTraitUpdate(args)
 
 	if GrowUnstuck then currentSize = 1 end
 
+	local growthSpeed = 0.2
+
+	if config.growthSpeed then
+		if config.growthSpeed == "Instant" then
+			growthSpeed = 0.0
+		elseif config.growthSpeed == "Slow" then
+			growthSpeed = 2.0
+		end
+	end
+
 	SetAudioEffectState({ Name = "Chipmunk", Value = chipmunk })
-	SetScale({ Id = unit.ObjectId, Fraction = currentSize, Duration = 0.2 })
+	SetScale({ Id = unit.ObjectId, Fraction = currentSize, Duration = growthSpeed })
 	unit.EffectVfxScale = currentSize
 
 	--print( "Chipmunk: " .. chipmunk)
 	updateGrowDamage()
 	updateGrowHealth()
-	updateGrowSpeed()
+	updateGrowSpeed() --not related to the above growth speed. this one's the stat (mel's run speed)
 	
 	return true
 end
@@ -553,4 +563,68 @@ function CheckChamberTraits_wrap()
 				GrowHero({ changeValue = (config.growEveryXRooms or 2), doPresentation = true })
 		end
 	end]]
+end
+
+function resetSettings()
+	config.growthMode = "Per Encounter"
+	config.startingSize = 1.00
+	config.sizeGrowthPerRoom = 0.0225
+	config.finalSize = 1.9
+	config.startingPitch = 0
+	config.voicePitchChangePerRoom = -0.027
+	config.finalPitch = -1.1
+	config.growEveryXRooms = 2
+	config.healthModeUseStartingHP = false
+	config.healthModeNormalSizeHP = 70
+	config.healthModeBigSize = 1.90
+	config.healthModeBigPitch = -1.1
+	config.hubModeGrowth = 0.0225
+	config.hubModePitch = -0.027
+	config.voicePitchUseLowerLimit = false
+	config.voicePitchUseUpperLimit = false
+	config.voicePitchLowerLimit = -1.1
+	config.voicePitchUpperLimit = 0.5
+	config.sizeUseLowerLimit = false
+	config.sizeUseUpperLimit = true
+	config.sizeLowerLimit = 0.1
+	config.sizeUpperLimit = 3.5
+	config.dangerousSizesAllowed = false
+	config.keepSizeInHub = true
+	config.keepHubSizeIntoRun = false
+	config.sizeControl = true
+	config.sizeControlInRuns = false
+	config.playSFX = true
+	config.playVoiceLines = true
+	config.showText = true
+	config.playAnimation = true
+	config.showParticles = true
+	config.controllerVibration = true
+	config.screenShake = true
+	config.hideBoon = false
+	config.scalePortrait = true
+	config.growthSpeed = "Fast"
+	config.altAnimation = false
+	config.statEnableSpeed = false
+	config.statEnableDamage = false
+	config.statEnableHealth = false
+	config.unstuckBind = "Alt U"
+	config.unstuckModifier = "Alt"
+	config.unstuckKey = "U"
+	config.resetBind = "Alt J"
+	config.resetModifier = "Alt"
+	config.resetKey = "J"
+	config.biggerBind = "None I"
+	config.biggerModifier = "None"
+	config.biggerKey = "I"
+	config.muchBiggerBind = "Alt I"
+	config.muchBiggerModifier = "Alt"
+	config.muchBiggerKey = "I"
+	config.smallerBind = "None O"
+	config.smallerModifier = "None"
+	config.smallerKey = "O"
+	config.muchSmallerBind = "Alt O"
+	config.muchSmallerModifier = "Alt"
+	config.muchSmallerKey = "O"
+	AddGrowTraitToHero({remakeTrait = true})
+	setBinds()
 end

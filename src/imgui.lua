@@ -317,6 +317,21 @@ function drawMenu()
         end
         rom.ImGui.TextWrapped("* Needs screen shake enabled in game settings to function.")
 
+        rom.ImGui.TextWrapped("Size Change Speed (Animation)")
+        local speedModes = { "Fast", "Instant", "Slow" }
+        rom.ImGui.PushItemWidth(200)
+        if rom.ImGui.BeginCombo("###speedMode", config.growthSpeed) then
+            for _, option in ipairs(speedModes) do
+                if rom.ImGui.Selectable(option, (option == config.growthSpeed)) then
+                    config.growthSpeed = option
+                    rom.ImGui.SetItemDefaultFocus()
+                end
+            end
+            rom.ImGui.EndCombo()
+        end
+        rom.ImGui.PopItemWidth()
+        rom.ImGui.TextWrapped("* Slow will hide the growth process better. Gaslight your friends! :)")
+        
         value, checked = rom.ImGui.Checkbox("Hide Growth Boon in UI", config.hideBoon)
         if checked then
             config.hideBoon = value
@@ -510,5 +525,17 @@ function drawMenu()
     end
     rom.ImGui.Spacing() --End Binds and Manual Control
 
+    if rom.ImGui.CollapsingHeader("Reset Settings to Default") then
+        rom.ImGui.PushStyleColor(rom.ImGuiCol.Text, 0.75, 0, 0, 1)
+        rom.ImGui.TextWrapped("Are you sure?")
+        rom.ImGui.PopStyleColor()
+        rom.ImGui.PushStyleColor(rom.ImGuiCol.Button, 0.75, 0, 0, 1)
+        reset = rom.ImGui.Button("Reset")
+        rom.ImGui.PopStyleColor()
 
+        if reset then
+            resetSettings()
+        end
+    end
+    rom.ImGui.Spacing() --End Binds and Manual Control
 end --drawMenu

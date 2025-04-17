@@ -54,8 +54,8 @@ function drawMenu()
                 config.sizeGrowthPerRoom = (config.finalSize - config.startingSize) / 40
                 GrowTraitUpdate()
             end
-            rom.ImGui.TextWrapped("* Olympus runs have over 30% more rooms! Size change will be much greater there.")
             rom.ImGui.PushStyleColor(rom.ImGuiCol.Text, 0.75, 0.75, 0, 1)
+            rom.ImGui.TextWrapped("* Olympus runs have over 30% more rooms! Size change will be much greater there.")
             rom.ImGui.TextWrapped("* Sliders can go further with size limit settings below, but this can cause gameplay issues.")
             rom.ImGui.PopStyleColor()
 
@@ -95,8 +95,8 @@ function drawMenu()
                 config.voicePitchChangePerRoom = (config.finalPitch - config.startingPitch) / 40
                 GrowTraitUpdate()
             end
-            rom.ImGui.TextWrapped("* Olympus runs have over 30% more rooms! Size change will be much greater there.")
             rom.ImGui.PushStyleColor(rom.ImGuiCol.Text, 0.75, 0.75, 0, 1)
+            rom.ImGui.TextWrapped("* Olympus runs have over 30% more rooms! Size change will be much greater there.")
             rom.ImGui.TextWrapped("* Voice pitch sounds very silly below -1.1 and above 0.5.")
             rom.ImGui.PopStyleColor()
             
@@ -153,7 +153,7 @@ function drawMenu()
                 GrowTraitUpdate()
             end
             rom.ImGui.PushStyleColor(rom.ImGuiCol.Text, 0.75, 0.75, 0, 1)
-            rom.ImGui.TextWrapped("* Can go bigger, but can cause major problems, change limits below if you're sure.")
+            rom.ImGui.TextWrapped("* Sliders can go further with size limit settings below, but this can cause gameplay issues.")
             rom.ImGui.PopStyleColor()
 
             if config.healthModeBigSize > 3.5 then
@@ -175,7 +175,6 @@ function drawMenu()
                 config.healthModeBigPitch = value
                 GrowTraitUpdate()
             end
-            rom.ImGui.TextWrapped("* Olympus runs have over 30% more rooms! Size change will be much greater there.")
             rom.ImGui.PushStyleColor(rom.ImGuiCol.Text, 0.75, 0.75, 0, 1)
             rom.ImGui.TextWrapped("* Voice pitch sounds very silly below -1.1 and above 0.5.")
             rom.ImGui.PopStyleColor()
@@ -300,6 +299,11 @@ function drawMenu()
             config.scalePortrait = value
         end
 
+        value, checked = rom.ImGui.Checkbox("Map Doll Size Change", config.scaleMapDoll)
+        if checked then
+            config.scaleMapDoll = value
+        end
+
         value, checked = rom.ImGui.Checkbox("Particle Effects", config.showParticles)
         if checked then
             config.showParticles = value
@@ -422,7 +426,9 @@ function drawMenu()
             end
         end
 
+        rom.ImGui.PushStyleColor(rom.ImGuiCol.Text, 0.75, 0.75, 0, 1)
         rom.ImGui.TextWrapped("* Hub only without below option.")
+        rom.ImGui.PopStyleColor()
 
         value, checked = rom.ImGui.Checkbox("Manual Size Control Enabled in Runs", config.sizeControlInRuns)
         if checked then
@@ -438,6 +444,12 @@ function drawMenu()
         rom.ImGui.Separator()
 
         rom.ImGui.TextWrapped("Binds for manual control below.")
+        rom.ImGui.PushStyleColor(rom.ImGuiCol.Text, 0.75, 0, 0, 1)
+        rom.ImGui.TextWrapped("* Avoid binding to non-letter keys if possible! If this menu crashes on load, delete your Meligrowe config file in r2modmanPlus-local\\HadesII\\profiles\\Default\\ReturnOfModding. It will be re-generated on launch.")
+        rom.ImGui.PopStyleColor()
+        rom.ImGui.PushStyleColor(rom.ImGuiCol.Text, 0.75, 0.75, 0, 1)
+        rom.ImGui.TextWrapped("* Some key/modifier combos do not work due to overlap with engine functions and debug keybinds. I cannot fix these issues on my end.")
+        rom.ImGui.PopStyleColor()
         rom.ImGui.Text("                               Modifier             Key")
 
         local foundBindDifference = false

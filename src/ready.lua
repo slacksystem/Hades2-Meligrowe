@@ -121,7 +121,10 @@ modutil.mod.Path.Wrap("ValidateMaxHealth", function(base, blockDelta)
 	end
 
 	if config.growthMode == "Max HP" and HeroHasTrait("HealthGrowTrait") and hasChanged then
-		GrowHero({ doPresentation = true })
+		local dP = true
+
+		if CurrentHubRoom ~= nil then local dP = false end
+		GrowHero({ doPresentation = dP })
 	end
 end)
 

@@ -1,5 +1,6 @@
 ---@diagnostic disable: undefined-global
 ---@diagnostic disable: deprecated
+---@diagnostic disable: need-check-nil
 
 function BiomeMapPresentation_wrap( source, args )
 
@@ -153,19 +154,20 @@ function BiomeMapPresentation_wrap( source, args )
 	SetAnimation({ Name = "MelMarkerIdle", DestinationId = melId })
 	
     --MODDED START
-    if CurrentRun and CurrentRun.Hero and CurrentRun.Hero.trackedScale then
+    if config.scaleMapDoll == true and CurrentRun and CurrentRun.Hero and CurrentRun.Hero.trackedScale then
         local adjustSize = CurrentRun.Hero.trackedScale
         SetScale({ Id = melId, Fraction = adjustSize })
-    end
-    --MODDED END
+	else
+		-- default Hades II behavior
+		-- adjust scale of Mel based on Circe's spells
+		if HeroHasTrait( "CirceEnlargeTrait" ) then
+			SetScale({ Id = melId, Fraction = 1.70 })
+		elseif HeroHasTrait( "CirceShrinkTrait" ) then
+			SetScale({ Id = melId, Fraction = 0.65 })
+		end
+	end
 
-    --[[
-	-- adjust scale of Mel based on Circe's spells
-	if HeroHasTrait( "CirceEnlargeTrait" ) then
-		SetScale({ Id = melId, Fraction = 1.70 })
-	elseif HeroHasTrait( "CirceShrinkTrait" ) then
-		SetScale({ Id = melId, Fraction = 0.65 })
-	end]]
+	--MODDED END
 
 	local playerTeamIds = { melId }
 	local familiarId = nil

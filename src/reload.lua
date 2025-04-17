@@ -605,6 +605,7 @@ function resetSettings()
 	config.screenShake = true
 	config.hideBoon = false
 	config.scalePortrait = true
+	config.scaleMapDoll = true
 	config.growthSpeed = "Fast"
 	config.altAnimation = false
 	config.statEnableSpeed = false

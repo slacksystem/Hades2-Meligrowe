@@ -5,16 +5,16 @@ schemaVersion = "0.0.1"
 [package]
 namespace = "RoboBro"
 name = "Meligrowe"
-versionNumber = "0.0.1"
-description = "Makes Melinoe get bigger every room."
+versionNumber = "1.0.0"
+description = "Size-changing toybox for Hades 2! Grow Melinoe bigger or shrink her smaller as you play a run. Make her voice pitch deeper or higher. Highly configurable!"
 websiteUrl = "https://github.com/BlueKingBar/Meligrowe"
 containsNsfwContent = false
 
 [package.dependencies]
-Hell2Modding-Hell2Modding = "1.0.28"
-SGG_Modding-ENVY = "1.1.0"
-SGG_Modding-Chalk = "2.0.2"
-SGG_Modding-ReLoad = "1.0.1"
+Hell2Modding-Hell2Modding = "1.0.55"
+LuaENVY-ENVY = "1.2.0"
+SGG_Modding-Chalk = "2.1.1"
+SGG_Modding-ReLoad = "1.0.2"
 SGG_Modding-SJSON = "1.0.0"
 SGG_Modding-ModUtil = "4.0.0"
 
@@ -42,4 +42,4 @@ repository = "https://thunderstore.io"
 communities = [ "hades-ii", ]
 
 [publish.categories]
-hades-ii = [ "mods", ]
+hades-ii = [ "mods", "misc", ]

@@ -253,7 +253,7 @@ function drawMenu()
 
         rom.ImGui.TextWrapped("Enables very large size sliders. Can negatively effect gameplay.")
         rom.ImGui.PushStyleColor(rom.ImGuiCol.Text, 0.75, 0, 0, 1)
-        rom.ImGui.TextWrapped("Sizes over 6.0 can cause CRASHES, SOFTLOCKS, and CLIPPING OUT OF BOUNDS!")
+        rom.ImGui.TextWrapped("Sizes over 6.0 can cause CRASHES, SOFTLOCKS, and CLIPPING OUT OF BOUNDS! Flashing particles are NOT EPILEPSY-FRIENDLY!")
 
         if config.dangerousSizesAllowed == true then
             rom.ImGui.Spacing()
@@ -414,12 +414,12 @@ function drawMenu()
         end
 
         if config.sizeControl == true then
-            value, used = rom.ImGui.InputFloat("Size Change per Press (Hub Only)", config.hubModeGrowth, -1, 1)
+            value, used = rom.ImGui.InputFloat("Size Change (Hub Only)", config.hubModeGrowth, -1, 1)
             if used then
                 config.hubModeGrowth = value
                 GrowTraitUpdate()
             end
-            value, used = rom.ImGui.InputFloat("Pitch Change per Press (Hub Only)", config.hubModePitch, -1, 1)
+            value, used = rom.ImGui.InputFloat("Pitch Change (Hub Only)", config.hubModePitch, -1, 1)
             if used then
                 config.hubModePitch = value
                 GrowTraitUpdate()
@@ -445,10 +445,10 @@ function drawMenu()
 
         rom.ImGui.TextWrapped("Binds for manual control below.")
         rom.ImGui.PushStyleColor(rom.ImGuiCol.Text, 0.75, 0, 0, 1)
-        rom.ImGui.TextWrapped("* Avoid binding to non-letter keys if possible! If this menu crashes on load, delete your Meligrowe config file in r2modmanPlus-local\\HadesII\\profiles\\Default\\ReturnOfModding. It will be re-generated on launch.")
+        rom.ImGui.TextWrapped("* Avoid binding to non-letter keys if possible! If this menu crashes on load, delete your Meligrowe config file in ReturnOfModding\\config.")
         rom.ImGui.PopStyleColor()
         rom.ImGui.PushStyleColor(rom.ImGuiCol.Text, 0.75, 0.75, 0, 1)
-        rom.ImGui.TextWrapped("* Some key/modifier combos do not work due to overlap with engine functions and debug keybinds. I cannot fix these issues on my end.")
+        rom.ImGui.TextWrapped("* Some key/modifier combos do not work due to overlap with engine functions and debug keybinds.")
         rom.ImGui.PopStyleColor()
         rom.ImGui.Text("                               Modifier             Key")
 

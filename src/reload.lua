@@ -196,19 +196,25 @@ function GrowTraitUpdate(args)
 	end
 
 	if HeroHasTrait("CirceEnlargeTrait") then
-		trait.GrowTraitValue = trait.GrowTraitValue * 1.25
+		circeGrowMultiplier = 1.25 and trait.GrowTraitValue > 0 or 0.75
+		chipmunkExtra = -0.2 and trait.GrowTraitValue > 0 or 0.3
+		trait.GrowTraitValue = trait.GrowTraitValue * circeGrowMultiplier
 		if mode == "room" then
-			growthPerRoomDisplay = growthPerRoom * 1.25
+			growthPerRoomDisplay = growthPerRoom * circeGrowMultiplier
 		end
 		trait.BaseChipmunkValue = trait.BaseChipmunkValue - 0.2
 	end
 
 	if HeroHasTrait("CirceShrinkTrait") then
-		trait.GrowTraitValue = trait.GrowTraitValue * 0.75
+		circeGrowMultiplier = 0.75 and trait.GrowTraitValue > 0 or 1.25
+		chipmunkExtra = 0.3 and trait.GrowTraitValue > 0 or -0.2
+
+		trait.GrowTraitValue = trait.GrowTraitValue * circeGrowMultiplier
+		trait.GrowTraitValue = trait.GrowTraitValue * circeGrowMultiplier
 		if mode == "room" then
-			growthPerRoomDisplay = growthPerRoom * 0.75
+			growthPerRoomDisplay = growthPerRoom * circeGrowMultiplier
 		end
-		trait.BaseChipmunkValue = trait.BaseChipmunkValue + 0.3
+		trait.BaseChipmunkValue = trait.BaseChipmunkValue + chipmunkExtra
 	end
 
 	if config.voicePitchUseLowerLimit and config.voicePitchLowerLimit ~= nil then

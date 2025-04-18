@@ -2,6 +2,8 @@
 
 Super-configurable size-changing mod for Hades 2!
 
+https://www.youtube.com/watch?v=K9ndNSKxHB0
+
 ![bigger](https://github.com/user-attachments/assets/ade23c83-2c38-4e17-bd03-20704d2d1039) ![smaller2](https://github.com/user-attachments/assets/24477b83-1451-46fc-bb95-9e18d9b92620)
 
 

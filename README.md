@@ -66,7 +66,7 @@ Gain the booming voice of a titan, or try Arachne's cadence on for size!
 - Install r2modman https://thunderstore.io/package/ebkr/r2modman/
   - Make sure to pick Manual Install from that page and follow the directions.
   - Select Hades 2 as your game.
-  - Search for Meligrowe in online mods, or go here and click Install with Mod Manager: **GO YELL AT ROBO IF HE DIDN'T REPLACE THIS WITH THE LINK**
+  - Search for Meligrowe in online mods, or go here and click Install with Mod Manager: https://thunderstore.io/c/hades-ii/p/RoboBro/Meligrowe/ (If you're there already, scroll back up!)
   - Hit Download, wait for the install to finish, then hit Start Modded.
 
 # Configuration

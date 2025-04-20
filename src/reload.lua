@@ -42,11 +42,8 @@ function setRoomGrowTraitHelper(level, divisor, trait)
 	TraitUIUpdateText( trait )
 end
 
-function updateGrowDamage()
-	local damage = 1.0
-	local trait = nil
-
-	if CurrentRun and CurrentRun.Hero then
+-- Gets the relevant trait from the hero, helper function to reduce code duplication
+function getGrowTrait()
 		if HeroHasTrait("GrowTrait") then
 			trait = GetHeroTrait("GrowTrait")
 		elseif HeroHasTrait("HealthGrowTrait") then
@@ -54,6 +51,14 @@ function updateGrowDamage()
 		elseif HeroHasTrait("HubGrowTrait") then
 			trait = GetHeroTrait("HubGrowTrait")
 		end
+		return trait
+end
+
+function updateGrowDamage()
+	local damage = 1.0
+	local trait = getGrowTrait()
+
+	if CurrentRun and CurrentRun.Hero then
 
 		if trait then
 			if config.statEnableDamage then
@@ -68,7 +73,7 @@ end
 
 function updateGrowHealth()
 	local health = 1.0
-	local trait = nil
+	local trait = getGrowTrait()
 
 	if CurrentRun and CurrentRun.Hero then
 		--Does not apply to max health scaling!

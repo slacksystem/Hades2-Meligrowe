@@ -44,14 +44,17 @@ end
 
 -- Gets the relevant trait from the hero, helper function to reduce code duplication
 function getGrowTrait()
+		mode = "room"
 		if HeroHasTrait("GrowTrait") then
 			trait = GetHeroTrait("GrowTrait")
 		elseif HeroHasTrait("HealthGrowTrait") then
 			trait = GetHeroTrait("HealthGrowTrait")
+			mode = "hp"
 		elseif HeroHasTrait("HubGrowTrait") then
 			trait = GetHeroTrait("HubGrowTrait")
+			mode = "hub"
 		end
-		return trait
+		return trait, mode
 end
 
 function updateGrowDamage()
@@ -75,13 +78,6 @@ function updateGrowHealth()
 	local health = 1.0
 	local trait = getGrowTrait()
 
-	if CurrentRun and CurrentRun.Hero then
-		--Does not apply to max health scaling!
-		if HeroHasTrait("GrowTrait") then
-			trait = GetHeroTrait("GrowTrait")
-		elseif HeroHasTrait("HubGrowTrait") then
-			trait = GetHeroTrait("HubGrowTrait")
-		end
 
 		if trait then
 			if config.statEnableHealth then
@@ -91,7 +87,6 @@ function updateGrowHealth()
 
 			trait.MaxHealthMultiplier = health
 		end
-	end
 
 	ValidateMaxHealth()
 	thread(UpdateHealthUI)
@@ -99,17 +94,9 @@ end
 
 function updateGrowSpeed()
 	local speed = 1.0
-	local trait = nil
+	local trait = getGrowTrait()
 
 	if CurrentRun and CurrentRun.Hero and config.statEnableSpeed then
-		if HeroHasTrait("GrowTrait") then
-			trait = GetHeroTrait("GrowTrait")
-		elseif HeroHasTrait("HealthGrowTrait") then
-			trait = GetHeroTrait("HealthGrowTrait")
-		elseif HeroHasTrait("HubGrowTrait") then
-			trait = GetHeroTrait("HubGrowTrait")
-		end
-
 		if trait then
 			speed = trait.GrowTraitValue or 1.0
 			speed = math.max(speed, 0.5)
@@ -151,19 +138,11 @@ end
 function GrowTraitUpdate(args)
 	local unit = nil
 	local trait = nil
-	local mode = "room"
+	local mode = nil
 
 	if CurrentRun ~= nil and CurrentRun.Hero ~= nil then
 		unit = CurrentRun.Hero
-		if HeroHasTrait("GrowTrait") then
-			trait = GetHeroTrait("GrowTrait")
-		elseif HeroHasTrait("HealthGrowTrait") then
-			trait = GetHeroTrait("HealthGrowTrait")
-			mode = "hp"
-		elseif HeroHasTrait("HubGrowTrait")then
-			trait = GetHeroTrait("HubGrowTrait")
-			mode = "hub"
-		end
+		trait, mode = getGrowTrait()
 	end
 
 	if unit == nil or trait == nil then return false end

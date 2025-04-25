@@ -40,6 +40,15 @@ function GrowModActivate(m, r, h)
 	end
 end
 
+modutil.mod.Path.Wrap("FormatExtractedValue", function (base, value, extractData )
+	if extractData.format ~= nil then
+		if extratData.format == "PlainString" then
+			return value	
+		end
+	end
+	return base(value, extractData)
+end)
+
 --puts the funny boon on you at the start of a run (over in reload.lua)
 modutil.mod.Path.Wrap("StartNewRun", function(base, prevRun, args)
 	local retVar = base(prevRun, args)

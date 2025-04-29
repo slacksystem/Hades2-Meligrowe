@@ -15,6 +15,20 @@ local text_to_insert = sjson.to_object({
 	Description = "{#UpgradeFormat}{$TooltipData.ExtractData.CurrentMelSize:P} {#Prev}size. Every {#BoldFormat}{$TooltipData.ExtractData.TooltipRoomInterval} {$Keywords.EncounterPlural}{#Prev}, gains {#BoldFormatGraft}+{$TooltipData.ExtractData.MelSizeIncreasePerXRooms:F} {#Prev}size.",
 }, order)
 
+local growtrait_growtext = sjson.to_object({
+	Id = "GrowTrait_GrowText",
+	InheritFrom = "BaseBoon",
+	DisplayName = "Increasing Heft",
+	Description = "{#UpgradeFormat}{$TooltipData.ExtractData.CurrentMelSize:P} {#Prev}size. Every {#BoldFormat}{$TooltipData.ExtractData.TooltipRoomInterval} {$Keywords.EncounterPlural}{#Prev}, gains {#BoldFormatGraft} {$TooltipData.ExtractData.MelSizeIncreasePerXRooms:F} {#Prev}in size.",
+}, order)
+
+local growtrait_shrinktext = sjson.to_object({
+	Id = "GrowTrait_ShrinkText",
+	InheritFrom = "BaseBoon",
+	DisplayName = "Diminishing Stature",
+	Description = "{#UpgradeFormat}{$TooltipData.ExtractData.CurrentMelSize:P} {#Prev}size. Every {#BoldFormat}{$TooltipData.ExtractData.TooltipRoomInterval} {$Keywords.EncounterPlural}{#Prev}, loses {#BoldFormatGraft} {$TooltipData.ExtractData.MelSizeIncreasePerXRooms:F} {#Prev}in size.",
+}, order)
+
 local text_to_insert2 = sjson.to_object({
 	Id = "HealthGrowTrait",
 	InheritFrom = "BaseBoon",
@@ -34,6 +48,10 @@ local textfile = rom.path.combine(rom.paths.Content, "Game/Text/en/TraitText.en.
 sjson.hook(textfile, function(sjsonData)
 	---@diagnostic disable-next-line: param-type-mismatch
 	table.insert(sjsonData.Texts, text_to_insert)
+	---@diagnostic disable-next-line: param-type-mismatch
+	table.insert(sjsonData.Texts, growtrait_growtext)
+	---@diagnostic disable-next-line: param-type-mismatch
+	table.insert(sjsonData.Texts, growtrait_shrinktext)
 	---@diagnostic disable-next-line: param-type-mismatch
 	table.insert(sjsonData.Texts, text_to_insert2)
 	---@diagnostic disable-next-line: param-type-mismatch
@@ -368,6 +386,7 @@ GrowTraits = {
 				ReportedRoomsPerUpgrade = "Amount",
 			},
 		},
+		ShrinkOrGrow = "loses",
 		ExtractValues = {
 			{
 				Key = "GrowTraitGrowthPerRoomDisplay",
@@ -385,6 +404,11 @@ GrowTraits = {
 			{
 				Key = "ReportedRoomsPerUpgrade",
 				ExtractAs = "TooltipRoomInterval",
+			},
+			{
+				Key = "ShrinkOrGrow",
+				ExtractAs = "MelShrinkOrGrowText",
+				Format = "PlainString",
 			},
 		},
 	},
